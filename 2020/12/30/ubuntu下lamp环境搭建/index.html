@@ -6,15 +6,16 @@
   <meta http-equiv="cache-control" content="no-cache">
   <meta http-equiv="expires" content="0">
   
-  <title>docker设置代理 | Yaoa</title>
+  <title>ubuntu下lamp环境搭建 | Yaoa</title>
   <meta name="author" content="yaoa">
   
-  <meta name="description" content="1对于没有国内镜像加速的资源，设置代理，加快速度。"> 
+  <meta name="description" content="ubuntu下搭建lamp环境apache1sudo apt install apache2
+安装完成后，会自动启动。"> 
   
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  <meta property="og:title" content="docker设置代理"/>
+  <meta property="og:title" content="ubuntu下lamp环境搭建"/>
   <meta property="og:site_name" content="Yaoa"/>
 
   
@@ -100,7 +101,7 @@
 
 	
 		<div class="page-header">
-			<h1> docker设置代理</h1>
+			<h1> ubuntu下lamp环境搭建</h1>
 		</div>
 	
 
@@ -117,14 +118,59 @@
 	<div class="mypage">		
 	  		
 
-	  <h1 id="1"><a href="#1" class="headerlink" title="1"></a>1</h1><p>对于没有国内镜像加速的资源，设置代理，加快速度。</p>
+	  <h1 id="ubuntu下搭建lamp环境"><a href="#ubuntu下搭建lamp环境" class="headerlink" title="ubuntu下搭建lamp环境"></a>ubuntu下搭建lamp环境</h1><h2 id="apache"><a href="#apache" class="headerlink" title="apache"></a>apache</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt install apache2</span><br></pre></td></tr></table></figure>
+<p>安装完成后，会自动启动。</p>
 <a id="more"></a>
-<h1 id="2"><a href="#2" class="headerlink" title="2"></a>2</h1><p>适用于Debian/Ubuntu，RedHat/CentOS系统</p>
+
+<p>查看服务服务状态</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl status apache</span><br></pre></td></tr></table></figure>
+<p>操作apache服务</p>
 <ul>
-<li>创建目录<br><code>mkdir -p /etc/systemd/system/docker.service.d</code></li>
-<li>添加网络配置文件<br><code>vim /etc/systemd/system/docker.service.d/http-proxy.conf</code></li>
-<li>设置如下配置<br>  NO_PROXY为不需要代理的仓库域名或ip<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[Service]</span><br><span class="line">Environment&#x3D;&quot;HTTP_PROXY&#x3D;http:&#x2F;&#x2F;proxy-addr:proxy-port&quot; &quot;HTTPS_PROXY&#x3D;http:&#x2F;&#x2F;proxy-addr:proxy-port&quot; &quot;NO_PROXY&#x3D;localhost,127.0.0.1,docker-registry.somecorporation.com&quot;</span><br></pre></td></tr></table></figure></li>
-<li>重载docker服务<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">systemctl daemon-reload</span><br><span class="line">systemctl restart docker</span><br></pre></td></tr></table></figure></li>
+<li><p>systemctl start apache2    # 开启</p>
+</li>
+<li><p>systemctl stop apache2    # 关闭</p>
+</li>
+<li><p>systemctl restart apache2    # 重启</p>
+</li>
+</ul>
+<p>此时已经可以访问web服务</p>
+<h1 id="Mysql"><a href="#Mysql" class="headerlink" title="Mysql"></a>Mysql</h1><ul>
+<li><p>先查看是否安装mysql</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dpkg -l | grep mysql</span><br></pre></td></tr></table></figure>
+
+
+</li>
+</ul>
+<ul>
+<li><p>安装</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt install mysql-server</span><br></pre></td></tr></table></figure>
+
+
+</li>
+</ul>
+<ul>
+<li><p>查看服务状态</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl status mysql.service </span><br></pre></td></tr></table></figure>
+
+
+</li>
+</ul>
+<ul>
+<li><p>登陆mysql</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql -uroot -p</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>默认没有密码</p>
+<p>如果出现“ERROR 1698 (28000): Access denied for user ‘root’@’localhost’”,进行如下操作。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">sudo mysql -u root</span><br><span class="line">mysql&gt; USE mysql;</span><br><span class="line">mysql&gt; UPDATE user SET plugin&#x3D;&#39;mysql_native_password&#39; WHERE User&#x3D;&#39;root&#39;;</span><br><span class="line">mysql&gt; FLUSH PRIVILEGES;</span><br><span class="line">mysql&gt; exit;</span><br></pre></td></tr></table></figure>
+</blockquote>
+<h1 id="php"><a href="#php" class="headerlink" title="php"></a>php</h1></li>
+<li><p>安装</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt install php</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>安装模块</p>
+<p>以curl为例</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt install php-curl</span><br></pre></td></tr></table></figure>
+</li>
 </ul>
 
 	  <div class="article-footer-copyright">
@@ -135,7 +181,7 @@
 	</div>
 
 	
-	<span id="/2020/12/30/docker%E8%AE%BE%E7%BD%AE%E4%BB%A3%E7%90%86/" class="leancloud-visitors view" data-flag-title="docker设置代理">
+	<span id="/2020/12/30/ubuntu%E4%B8%8Blamp%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/" class="leancloud-visitors view" data-flag-title="ubuntu下lamp环境搭建">
 		<em class="post-meta-item-text"> Page View </em> <i class="leancloud-visitors-count"></i>
 	</span>
 	
@@ -146,13 +192,12 @@
 
     
     
-    <a href="/2020/12/30/ubuntu下lamp环境搭建/" type="button" class="btn btn-default"><i
-                class="fa fa-arrow-circle-o-left"></i> 上一页</a>
+    <a type="button" class="btn btn-default disabled"><i class="fa fa-arrow-circle-o-left"></i>上一页</a>
     
 
     <a href="/" type="button" class="btn btn-default"><i class="fa fa-home"></i>Home</a>
     
-    <a href="/2020/12/23/sql注入常用知识/" type="button" class="btn btn-default ">下一页<i
+    <a href="/2020/12/30/docker设置代理/" type="button" class="btn btn-default ">下一页<i
                 class="fa fa-arrow-circle-o-right"></i></a>
     
 
@@ -169,8 +214,8 @@
     <h2 class="title">留言</h2>
 
     
-    <div class="ds-thread" data-thread-key="2020/12/30/docker设置代理/" data-title="docker设置代理"
-         data-url="http://yaoa.cool/2020/12/30/docker%E8%AE%BE%E7%BD%AE%E4%BB%A3%E7%90%86/"></div>
+    <div class="ds-thread" data-thread-key="2020/12/30/ubuntu下lamp环境搭建/" data-title="ubuntu下lamp环境搭建"
+         data-url="http://yaoa.cool/2020/12/30/ubuntu%E4%B8%8Blamp%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/"></div>
     
 </section>
 
@@ -211,7 +256,7 @@
 	<a data-toggle="collapse" data-target="#tags"><i class="fa fa-tags"></i></a>		  
     <ul id="tags" class="tag_box list-unstyled collapse in">	  
 	    
-  <li><a href="/tags/linux/">linux<span>2</span></a></li> <li><a href="/tags/docker/">docker<span>1</span></a></li>
+  <li><a href="/tags/linux/">linux<span>2</span></a></li>
     </ul>
 	</div>
 		
@@ -222,7 +267,7 @@
 	   <a data-toggle="collapse" data-target="#toc"><i class="fa fa-bars"></i></a>
 	   <div id="toc" class="toc collapse in">
 		   <span class="toc-title">Contents</span>
-			<ol class="toc-article"><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#1"><span class="toc-article-text">1</span></a></li><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#2"><span class="toc-article-text">2</span></a></li></ol>
+			<ol class="toc-article"><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#ubuntu%E4%B8%8B%E6%90%AD%E5%BB%BAlamp%E7%8E%AF%E5%A2%83"><span class="toc-article-text">ubuntu下搭建lamp环境</span></a><ol class="toc-article-child"><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#apache"><span class="toc-article-text">apache</span></a></li></ol></li><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#Mysql"><span class="toc-article-text">Mysql</span></a></li><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#php"><span class="toc-article-text">php</span></a></li></ol>
 		</div>
 	
 	</div>

