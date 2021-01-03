@@ -6,15 +6,43 @@
   <meta http-equiv="cache-control" content="no-cache">
   <meta http-equiv="expires" content="0">
   
-  <title>docker设置代理 | Yaoa</title>
+  <title>crontab | Yaoa</title>
   <meta name="author" content="yaoa">
   
-  <meta name="description" content="1对于没有国内镜像加速的资源，设置代理，加快速度。"> 
+  <meta name="description" content="介绍
+执行定时任务，新创建的 cron 任务，不会马上执行，至少要过 2 分钟后才可以，当然你可以重启 cron 来马上执行。
+而 linux 任务调度的工作主要分为以下两类：
+
+1、系统执行的工作：系统周期性所要执行的工作，如备份系统数据、清理缓存
+2、个人执行的工作：某个用户定期要做的工作，例如每隔10分钟检查邮件服务器是否有新信，这些工作可由每个用户自行设置
+
+
+语法
+crontab [-u user] file
+123* &amp;#96;&amp;#96;&amp;#96;  crontab [-u user] &amp;#123;-l| -r| -e&amp;#125;
+&amp;gt; -u 指定设置谁的定时任务，需要具有相应的权限，不指定默认设置自己的。
+
+参数说明
+
+-e : 执行文字编辑器来设定时程表，内定的文字编辑器是 VI，如果你想用别的文字编辑器，则请先设定 VISUAL 环境变数来指定使用那个文字编辑器(比如说 setenv VISUAL joe)
+-r : 删除目前的时程表
+-l : 列出目前的时程表
+
+
+时间格式
+1f1 f2 f3 f4 f5 program
+
+f1:分钟 ,* 表示每分钟都要执行,a-b表示a-b这段时间执行,*/n表示每n分钟执行一次
+f2:小时
+f3:每月中的第几日
+f4:月份
+f5:每星期中的第几天
+program:执行的程序"> 
   
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  <meta property="og:title" content="docker设置代理"/>
+  <meta property="og:title" content="crontab"/>
   <meta property="og:site_name" content="Yaoa"/>
 
   
@@ -100,7 +128,7 @@
 
 	
 		<div class="page-header">
-			<h1> docker设置代理</h1>
+			<h1> crontab</h1>
 		</div>
 	
 
@@ -117,14 +145,37 @@
 	<div class="mypage">		
 	  		
 
-	  <h1 id="1"><a href="#1" class="headerlink" title="1"></a>1</h1><p>对于没有国内镜像加速的资源，设置代理，加快速度。</p>
-<a id="more"></a>
-<h1 id="2"><a href="#2" class="headerlink" title="2"></a>2</h1><p>适用于Debian/Ubuntu，RedHat/CentOS系统</p>
+	  <h1 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h1><blockquote>
+<p>执行定时任务，新创建的 cron 任务，不会马上执行，至少要过 2 分钟后才可以，当然你可以重启 cron 来马上执行。</p>
+<p>而 linux 任务调度的工作主要分为以下两类：</p>
 <ul>
-<li>创建目录<br><code>mkdir -p /etc/systemd/system/docker.service.d</code></li>
-<li>添加网络配置文件<br><code>vim /etc/systemd/system/docker.service.d/http-proxy.conf</code></li>
-<li>设置如下配置<br>  NO_PROXY为不需要代理的仓库域名或ip<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[Service]</span><br><span class="line">Environment&#x3D;&quot;HTTP_PROXY&#x3D;http:&#x2F;&#x2F;proxy-addr:proxy-port&quot; &quot;HTTPS_PROXY&#x3D;http:&#x2F;&#x2F;proxy-addr:proxy-port&quot; &quot;NO_PROXY&#x3D;localhost,127.0.0.1,docker-registry.somecorporation.com&quot;</span><br></pre></td></tr></table></figure></li>
-<li>重载docker服务<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">systemctl daemon-reload</span><br><span class="line">systemctl restart docker</span><br></pre></td></tr></table></figure></li>
+<li>1、系统执行的工作：系统周期性所要执行的工作，如备份系统数据、清理缓存</li>
+<li>2、个人执行的工作：某个用户定期要做的工作，例如每隔10分钟检查邮件服务器是否有新信，这些工作可由每个用户自行设置</li>
+</ul>
+</blockquote>
+<h1 id="语法"><a href="#语法" class="headerlink" title="语法"></a>语法</h1><ul>
+<li><pre><code>crontab [-u user] file
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">* &#96;&#96;&#96;</span><br><span class="line">  crontab [-u user] &#123;-l| -r| -e&#125;</span><br></pre></td></tr></table></figure>
+&gt; -u 指定设置谁的定时任务，需要具有相应的权限，不指定默认设置自己的。</code></pre>
+</li>
+<li><p>参数说明</p>
+<ul>
+<li>-e : 执行文字编辑器来设定时程表，内定的文字编辑器是 VI，如果你想用别的文字编辑器，则请先设定 VISUAL 环境变数来指定使用那个文字编辑器(比如说 setenv VISUAL joe)</li>
+<li>-r : 删除目前的时程表</li>
+<li>-l : 列出目前的时程表</li>
+</ul>
+</li>
+<li><p>时间格式</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">f1 f2 f3 f4 f5 program</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>f1:分钟 ,* 表示每分钟都要执行,a-b表示a-b这段时间执行,*/n表示每n分钟执行一次</p>
+<p>f2:小时</p>
+<p>f3:每月中的第几日</p>
+<p>f4:月份</p>
+<p>f5:每星期中的第几天</p>
+<p>program:执行的程序</p>
+</blockquote>
+</li>
 </ul>
 
 	  <div class="article-footer-copyright">
@@ -135,7 +186,7 @@
 	</div>
 
 	
-	<span id="/2020/12/30/docker%E8%AE%BE%E7%BD%AE%E4%BB%A3%E7%90%86/" class="leancloud-visitors view" data-flag-title="docker设置代理">
+	<span id="/2021/01/03/crontab/" class="leancloud-visitors view" data-flag-title="crontab">
 		<em class="post-meta-item-text"> Page View </em> <i class="leancloud-visitors-count"></i>
 	</span>
 	
@@ -146,13 +197,13 @@
 
     
     
-    <a href="/2020/12/30/ubuntu下lamp环境搭建/" type="button" class="btn btn-default"><i
+    <a href="/2021/01/03/反弹shell/" type="button" class="btn btn-default"><i
                 class="fa fa-arrow-circle-o-left"></i> 上一页</a>
     
 
     <a href="/" type="button" class="btn btn-default"><i class="fa fa-home"></i>Home</a>
     
-    <a href="/2020/12/23/sql注入常用知识/" type="button" class="btn btn-default ">下一页<i
+    <a href="/2021/01/02/Redis/" type="button" class="btn btn-default ">下一页<i
                 class="fa fa-arrow-circle-o-right"></i></a>
     
 
@@ -169,8 +220,8 @@
     <h2 class="title">留言</h2>
 
     
-    <div class="ds-thread" data-thread-key="2020/12/30/docker设置代理/" data-title="docker设置代理"
-         data-url="http://yaoa.cool/2020/12/30/docker%E8%AE%BE%E7%BD%AE%E4%BB%A3%E7%90%86/"></div>
+    <div class="ds-thread" data-thread-key="2021/01/03/crontab/" data-title="crontab"
+         data-url="http://yaoa.cool/2021/01/03/crontab/"></div>
     
 </section>
 
@@ -187,7 +238,7 @@
 	
 	<div class="meta-widget">
 	<i class="fa fa-clock-o"></i>
-	2020-12-30 
+	2021-01-03 
 	</div>
 	
 
@@ -211,7 +262,7 @@
 	<a data-toggle="collapse" data-target="#tags"><i class="fa fa-tags"></i></a>		  
     <ul id="tags" class="tag_box list-unstyled collapse in">	  
 	    
-  <li><a href="/tags/linux/">linux<span>5</span></a></li> <li><a href="/tags/docker/">docker<span>2</span></a></li>
+  <li><a href="/tags/linux/">linux<span>5</span></a></li>
     </ul>
 	</div>
 		
@@ -222,7 +273,7 @@
 	   <a data-toggle="collapse" data-target="#toc"><i class="fa fa-bars"></i></a>
 	   <div id="toc" class="toc collapse in">
 		   <span class="toc-title">Contents</span>
-			<ol class="toc-article"><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#1"><span class="toc-article-text">1</span></a></li><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#2"><span class="toc-article-text">2</span></a></li></ol>
+			<ol class="toc-article"><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#%E4%BB%8B%E7%BB%8D"><span class="toc-article-text">介绍</span></a></li><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#%E8%AF%AD%E6%B3%95"><span class="toc-article-text">语法</span></a></li></ol>
 		</div>
 	
 	</div>

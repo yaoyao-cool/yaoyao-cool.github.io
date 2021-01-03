@@ -1,0 +1,825 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="cache-control" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  
+  <title>mongodb | Yaoa</title>
+  <meta name="author" content="yaoa">
+  
+  <meta name="description" content="重要概念
+
+mongodb结构
+
+
+
+关系数据库
+mongodb
+
+
+
+数据库
+数据库
+
+
+表
+集合
+
+
+行
+文档
+
+
+
+集合
+
+集合是无模式的，集合中的文档的格式可以各不相同。表需要提前设计表的结构；而集合不需要设计结构，任何格式的文档都可以存储进集合。
+
+
+文档
+
+文档的数据结构和 JSON 基本一样。所有存储在集合中的数据都是 BSON 格式。
+BSON 是一种类似 JSON 的二进制形式的存储格式，是 Binary JSON 的简称。
+
+
+文档例子
+&amp;#123;name: ”Tom”, 
+age: 18, 
+hobbies:  [“football”,”swimming”]&amp;#125;
+
+
+
+基础操作
+
+查看所有的数据库shwo dbs
+创建数据库(如果数据库不存在，则创建数据库，如果存在，则切换到该数据库。新创建的数据库不会出现在列表中，需要向其中插入数据才能在该命令的结果中看到。)use db_name
+查看当前使用的数据库db
+删除当前数据库db.dropDatabase()
+集合
+创建集合db.createCollection(&amp;quot;books&amp;quot;) 
+查看数据中的集合show tables
+删除集合db.books.drop() 
+向不存在的集合插入文档时会自动创建集合db.mycol2.insert(&amp;#123;&amp;quot;name&amp;quot; : &amp;quot;dhm&amp;quot;&amp;#125;)自动创建集合mycol2
+
+
+文档
+插入文档db.COLLECTION_NAME.insert(document)
+
+
+
+
+CURD操作
+
+插入
+
+db.collection.insertOne()     可插入一行，参数为文档db.products.insertOne( &amp;#123; item: &amp;quot;card&amp;quot;, qty: 15 &amp;#125; );
+db.collection.insertMany()    可插入多行，参数为文档数组db.products.insertMany( [ &amp;#123; item: &amp;quot;card&amp;quot;, qty: 15 &amp;#125;, &amp;#123; item: &amp;quot;envelope&amp;quot;, qty: 20 &amp;#125;   ] );
+db.collection.insert()         可插入一行或多行，参数为文档或文档数组可以使用insert插入一个或多个文档，取决于传入的参数是文档还是文档数组。
+
+
+查询
+
+db.collection.find(query, projection)
+
+查询所有文档db.inventory.find( &amp;#123;&amp;#125; )
+
+对文档进行格式化db.inventory.find( &amp;#123;&amp;#125; ).pretty()
+
+匹配查询db.inventory.find( &amp;#123; status: &amp;quot;D&amp;quot;,qty:75 &amp;#125; )
+
+嵌套文档查询，顺序必须相同
+
+比较操作符
+
+
+
+
+
+
+
+
+$gt
+大于
+
+
+$lt
+小于
+
+
+$gte
+大于等于
+
+
+$lte
+小于等于
+
+
+$ne
+不等于
+
+
+$eq
+等于
+
+
+$in
+符合其中任意一个，即可检索出
+
+
+$nin
+不符合才会检索出
+
+
+
+例子db.inventory.find( &amp;#123; qty:&amp;#123;$gt:50&amp;#125;&amp;#125; )qty大于50db.products.find(&amp;#123;status:&amp;#123;$ne:”D”&amp;#125;&amp;#125;)status不等于D
+
+逻辑操作符
+
+格式：&amp;#123;操作符:[&amp;#123;条件1&amp;#125;，&amp;#123;条件2&amp;#125;....]&amp;#125;
+隐式anddb.inventory.find( &amp;#123; status: &amp;quot;A&amp;quot;, qty: &amp;#123; $lt: 30 &amp;#125; &amp;#125; )
+显式anddb.inventory.find( &amp;#123; $and: [ &amp;#123; price: &amp;#123; $ne: 1.99 &amp;#125; &amp;#125;,  &amp;#123; price: &amp;#123; $exists: true &amp;#125; &amp;#125; ] &amp;#125; )
+ORdb.inventory.find(&amp;#123; $or: [ &amp;#123; status: &amp;quot;A&amp;quot; &amp;#125;, &amp;#123; qty: &amp;#123; $lt: 30 &amp;#125; &amp;#125;]&amp;#125; )
+notdb.inventory.find( &amp;#123; price: &amp;#123; $not: &amp;#123; $gt: 1.99 &amp;#125; &amp;#125; &amp;#125; )
+exists (查询文档中包含查询字段的值,包括null)db.inventory.find( &amp;#123; qty: &amp;#123; $exists: true, $nin: [ 5, 15 ] &amp;#125; &amp;#125; )
+type（查询字段值得类型为某个或某些BSON type的文档。）db.inventory.find( &amp;#123; status: &amp;#123; $type:”string” &amp;#125; &amp;#125; ) db.inventory.find( &amp;#123; status: &amp;#123; $type:”null” &amp;#125; &amp;#125; )
+
+
+精确查询(包括数组中的顺序)db.inventory.find( &amp;#123; tags: [&amp;quot;red&amp;quot;, &amp;quot;blank&amp;quot;] &amp;#125; )
+
+$all 忽略元素顺序db.inventory.find( &amp;#123; tags: &amp;#123; $all: [&amp;quot;red&amp;quot;, &amp;quot;blank&amp;quot;] &amp;#125; &amp;#125; ) tag数组中包含red,blank,且不限顺序
+
+$size(使用数组长度查询)db.inventory.find( &amp;#123; &amp;quot;tags&amp;quot;: &amp;#123; $size: 3 &amp;#125; &amp;#125; )
+
+$elementMatch (满足一个条件即可)db.inventory.find( &amp;#123; dim_cm: &amp;#123; $elemMatch: &amp;#123; $gt: 22, $lt: 30 &amp;#125; &amp;#125;&amp;#125;)
+
+数组索引db.inventory.find( &amp;#123; &amp;quot;dim_cm.1&amp;quot;: &amp;#123; $gt: 25 &amp;#125; &amp;#125; )dim_cm中第一个值大于25
+
+游标
+
+创建游标var  mycursor=db.inventory.find()
+
+访问游标mycursor[4]
+
+遍历完游标中的所有文档后，或10分钟后，游标会自动关闭
+
+var  mycursor=db.inventory.find().noCursorTimeOut()
+改变游标默认行为，不自动关闭
+
+手动关闭游标mycursor.close()
+
+count()接受一个参数，默认为false表示不考虑skip和limit函数的影响；为true时表示考虑这两个函数的影响。db.orders.find().count() 返回文档数量
+
+limit()   指定游标返回的最大文档数  （limit(0)与没有使用limit效果一样）db.orders.find().limit(5).count(true)
+
+
+
+投射指定查询结果中出现的字段
+
+0：不出现，1：出现，_id列默认出现db.inventory.find(   &amp;#123; status: &amp;quot;A&amp;quot; &amp;#125;, &amp;#123; item: 1, status: 1, &amp;quot;size.uom&amp;quot;: 1 &amp;#125;) 
+
+
+
+
+修改
+
+db.collection.updateOne()    更新最多一篇文档    第二个参数：更新操作符的文档
+db.collection.updateMany()   更新多篇文档        第二个参数：更新操作符的文档
+db.collection.replaceOne()    用新文档替换原来的文档  第二个参数：新的文档
+db.collection.update()        更新或替换原来的文档    第二个参数：更新操作符的文档或新文档
+文档主键_id是不能更改的
+操作符
+
+
+
+
+
+
+
+
+
+$set
+更新或新增字段
+
+
+$unset
+删除字段
+
+
+$rename
+重命名字段
+
+
+$inc
+加减字段值
+
+
+$mul
+相乘字段值
+
+
+$min
+
+
+
+$max
+
+
+
+
+$set   
+
+普通修改
+db.products.update(
+&amp;#123; _id: 100 &amp;#125;,   //查询_id的100的文档
+&amp;#123; $set: &amp;#123; details: &amp;quot;zzz&amp;quot; &amp;#125; &amp;#125; )//修改details为zzz
+
+嵌套文档修改
+db.products.update(
+&amp;#123; _id: 100 &amp;#125;,   
+&amp;#123; $set: &amp;#123; &amp;quot;details.make&amp;quot;: &amp;quot;zzz&amp;quot; &amp;#125; &amp;#125; )//&amp;#123;details:&amp;#123;make:&amp;#39;zzz&amp;#39;&amp;#125;&amp;#125;
+
+修改数组
+db.products.update(
+&amp;#123; _id: 100 &amp;#125;,
+&amp;#123; $set: &amp;#123;
+&amp;quot;tags.1&amp;quot;: &amp;quot;rain gear&amp;quot;,
+&amp;quot;ratings.0.rating&amp;quot;: 2      &amp;#125;   &amp;#125;)// &amp;#123;rating:[&amp;#123;rating:2&amp;#125;]&amp;#125; 数组中第一个元素的rating改为2
+
+
+
+$unset
+db.products.update(
+&amp;#123; _id:100 &amp;#125;,
+&amp;#123; $unset: &amp;#123; quantity: &amp;quot;&amp;quot;, &amp;quot;details.model&amp;quot;: &amp;quot;&amp;quot; &amp;#125; &amp;#125;)
+删除数组中的元素时，数组的长度不变，只是把相应位置的值改为null：
+
+$rename
+重命名文档中的字段   db.students.updateMany( &amp;#123;&amp;#125;, &amp;#123; $rename: &amp;#123; &amp;quot;nmae&amp;quot;: &amp;quot;name&amp;quot; &amp;#125; &amp;#125; )重命名内嵌文档中的字段   db.students.update( &amp;#123; _id: 1 &amp;#125;, &amp;#123; $rename: &amp;#123; &amp;quot;name.first&amp;quot;: &amp;quot;name.fname&amp;quot; &amp;#125; &amp;#125; )改变字段位置   db.students.update( &amp;#123; _id: 1 &amp;#125;, &amp;#123; $rename: &amp;#123; &amp;quot;name.last&amp;quot;: &amp;quot;last &amp;quot;,&amp;quot;mobile&amp;quot;: &amp;quot;name mobile&amp;quot;&amp;#125; &amp;#125; )
+
+$incdb.students.update( &amp;#123; _id: 1 &amp;#125;, &amp;#123; $inc: &amp;#123; &amp;quot;score&amp;quot;: -10&amp;#125; &amp;#125; )
+
+$muldb.students.update( &amp;#123; _id: 1 &amp;#125;, &amp;#123; $mul: &amp;#123; &amp;quot;score&amp;quot;: 0.5&amp;#125; &amp;#125; )
+
+
+
+删除
+
+db.collection.deleteOne() //删除满足筛选条件的一篇文档
+db.collection.deleteMany() //删除满足筛选条件的所有文档
+db.collection.remove()  //删除满足筛选条件的一篇或所有文档，取决于justOne的取值
+删除集合中的所有文档db.students.deleteMany(&amp;#123;&amp;#125;)
+删除整个集合db.students.drop()"> 
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="mongodb"/>
+  <meta property="og:site_name" content="Yaoa"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  
+  
+    <link href="/favicon.png" rel="icon">
+  
+  
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+
+  <script src="/js/jquery-2.0.3.min.js"></script>
+
+  <!-- analytics -->
+  
+
+
+
+
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+ <body>  
+  <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+	  <a class="navbar-brand" href="/">Yaoa</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+		  
+		  <li>
+			<a href="/archives" title="All the articles.">
+			  <i class=""></i>归档
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/categories" title="All the categories.">
+			  <i class=""></i>分类
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/tags" title="All the tags.">
+			  <i class=""></i>标签
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/about" title="About me.">
+			  <i class=""></i>关于我
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/atom.xml" title="Subscribe me.">
+			  <i class=""></i>RSS
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+  	<div class="content">
+    	 
+
+
+	
+		<div class="page-header">
+			<h1> mongodb</h1>
+		</div>
+	
+
+
+
+<div class="row post">
+	<!-- cols -->
+	
+	<div id="top_meta"></div>
+	<div class="col-md-9">
+	
+
+	<!-- content -->
+	<div class="mypage">		
+	  		
+
+	  <ul>
+<li><p>重要概念</p>
+<ul>
+<li><p>mongodb结构</p>
+<table>
+<thead>
+<tr>
+<th>关系数据库</th>
+<th>mongodb</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>数据库</td>
+<td>数据库</td>
+</tr>
+<tr>
+<td>表</td>
+<td>集合</td>
+</tr>
+<tr>
+<td>行</td>
+<td>文档</td>
+</tr>
+</tbody></table>
+</li>
+<li><p>集合</p>
+<ul>
+<li>集合是无模式的，集合中的文档的格式可以各不相同。表需要提前设计表的结构；而集合不需要设计结构，任何格式的文档都可以存储进集合。</li>
+</ul>
+</li>
+<li><p>文档</p>
+<ul>
+<li>文档的数据结构和 JSON 基本一样。所有存储在集合中的数据都是 BSON 格式。</li>
+<li>BSON 是一种类似 JSON 的二进制形式的存储格式，是 Binary JSON 的简称。</li>
+</ul>
+</li>
+<li><p>文档例子</p>
+<pre><code>&#123;name: ”Tom”, 
+age: 18, 
+hobbies:  [“football”,”swimming”]&#125;</code></pre>
+</li>
+</ul>
+</li>
+<li><p>基础操作</p>
+<ul>
+<li>查看所有的数据库<br><code>shwo dbs</code></li>
+<li>创建数据库(如果数据库不存在，则创建数据库，如果存在，则切换到该数据库。新创建的数据库不会出现在列表中，需要向其中插入数据才能在该命令的结果中看到。)<br><code>use db_name</code></li>
+<li>查看当前使用的数据库<br><code>db</code></li>
+<li>删除当前数据库<br><code>db.dropDatabase()</code></li>
+<li>集合<ul>
+<li>创建集合<br><code>db.createCollection(&quot;books&quot;) </code></li>
+<li>查看数据中的集合<br><code>show tables</code></li>
+<li>删除集合<br><code>db.books.drop() </code></li>
+<li>向不存在的集合插入文档时会自动创建集合<br><code>db.mycol2.insert(&#123;&quot;name&quot; : &quot;dhm&quot;&#125;)</code><br>自动创建集合mycol2</li>
+</ul>
+</li>
+<li>文档<ul>
+<li>插入文档<br><code>db.COLLECTION_NAME.insert(document)</code></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>CURD操作</p>
+<ul>
+<li><p>插入</p>
+<ul>
+<li>db.collection.insertOne()     可插入一行，参数为文档<br><code>db.products.insertOne( &#123; item: &quot;card&quot;, qty: 15 &#125; );</code></li>
+<li>db.collection.insertMany()    可插入多行，参数为文档数组<br><code>db.products.insertMany( [ &#123; item: &quot;card&quot;, qty: 15 &#125;, &#123; item: &quot;envelope&quot;, qty: 20 &#125;   ] );</code></li>
+<li>db.collection.insert()         可插入一行或多行，参数为文档或文档数组<br>可以使用insert插入一个或多个文档，取决于传入的参数是文档还是文档数组。</li>
+</ul>
+</li>
+<li><p>查询</p>
+<ul>
+<li><p>db.collection.find(query, projection)</p>
+</li>
+<li><p>查询所有文档<br><code>db.inventory.find( &#123;&#125; )</code></p>
+</li>
+<li><p>对文档进行格式化<br><code>db.inventory.find( &#123;&#125; ).pretty()</code></p>
+</li>
+<li><p>匹配查询<br><code>db.inventory.find( &#123; status: &quot;D&quot;,qty:75 &#125; )</code></p>
+</li>
+<li><p>嵌套文档查询，顺序必须相同</p>
+</li>
+<li><p>比较操作符</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>$gt</td>
+<td>大于</td>
+</tr>
+<tr>
+<td>$lt</td>
+<td>小于</td>
+</tr>
+<tr>
+<td>$gte</td>
+<td>大于等于</td>
+</tr>
+<tr>
+<td>$lte</td>
+<td>小于等于</td>
+</tr>
+<tr>
+<td>$ne</td>
+<td>不等于</td>
+</tr>
+<tr>
+<td>$eq</td>
+<td>等于</td>
+</tr>
+<tr>
+<td>$in</td>
+<td>符合其中任意一个，即可检索出</td>
+</tr>
+<tr>
+<td>$nin</td>
+<td>不符合才会检索出</td>
+</tr>
+</tbody></table>
+</li>
+<li><p>例子<br><code>db.inventory.find( &#123; qty:&#123;$gt:50&#125;&#125; )</code><br>qty大于50<br><code>db.products.find(&#123;status:&#123;$ne:”D”&#125;&#125;)</code><br>status不等于D</p>
+</li>
+<li><p>逻辑操作符</p>
+<ul>
+<li>格式：<br><code>&#123;操作符:[&#123;条件1&#125;，&#123;条件2&#125;....]&#125;</code></li>
+<li>隐式and<br><code>db.inventory.find( &#123; status: &quot;A&quot;, qty: &#123; $lt: 30 &#125; &#125; )</code></li>
+<li>显式and<br><code>db.inventory.find( &#123; $and: [ &#123; price: &#123; $ne: 1.99 &#125; &#125;,  &#123; price: &#123; $exists: true &#125; &#125; ] &#125; )</code></li>
+<li>OR<br><code>db.inventory.find(&#123; $or: [ &#123; status: &quot;A&quot; &#125;, &#123; qty: &#123; $lt: 30 &#125; &#125;]&#125; )</code></li>
+<li>not<br><code>db.inventory.find( &#123; price: &#123; $not: &#123; $gt: 1.99 &#125; &#125; &#125; )</code></li>
+<li>exists (查询文档中包含查询字段的值,包括null)<br><code>db.inventory.find( &#123; qty: &#123; $exists: true, $nin: [ 5, 15 ] &#125; &#125; )</code></li>
+<li>type（查询字段值得类型为某个或某些BSON type的文档。）<br><code>db.inventory.find( &#123; status: &#123; $type:”string” &#125; &#125; )</code><br> <code>db.inventory.find( &#123; status: &#123; $type:”null” &#125; &#125; )</code></li>
+</ul>
+</li>
+<li><p>精确查询(包括数组中的顺序)<br><code>db.inventory.find( &#123; tags: [&quot;red&quot;, &quot;blank&quot;] &#125; )</code></p>
+</li>
+<li><p>$all 忽略元素顺序<br><code>db.inventory.find( &#123; tags: &#123; $all: [&quot;red&quot;, &quot;blank&quot;] &#125; &#125; )</code><br> tag数组中包含red,blank,且不限顺序</p>
+</li>
+<li><p>$size(使用数组长度查询)<br><code>db.inventory.find( &#123; &quot;tags&quot;: &#123; $size: 3 &#125; &#125; )</code></p>
+</li>
+<li><p>$elementMatch (满足一个条件即可)<br><code>db.inventory.find( &#123; dim_cm: &#123; $elemMatch: &#123; $gt: 22, $lt: 30 &#125; &#125;&#125;)</code></p>
+</li>
+<li><p>数组索引<br><code>db.inventory.find( &#123; &quot;dim_cm.1&quot;: &#123; $gt: 25 &#125; &#125; )</code><br>dim_cm中第一个值大于25</p>
+</li>
+<li><p>游标</p>
+<ul>
+<li><p>创建游标<br><code>var  mycursor=db.inventory.find()</code></p>
+</li>
+<li><p>访问游标<br><code>mycursor[4]</code></p>
+</li>
+<li><p>遍历完游标中的所有文档后，或10分钟后，游标会自动关闭</p>
+</li>
+<li><p>var  mycursor=db.inventory.find().noCursorTimeOut()</p>
+<pre><code>改变游标默认行为，不自动关闭</code></pre>
+</li>
+<li><p>手动关闭游标<br><code>mycursor.close()</code></p>
+</li>
+<li><p>count()<br>接受一个参数，默认为false表示不考虑skip和limit函数的影响；为true时表示考虑这两个函数的影响。<br><code>db.orders.find().count()</code><br> 返回文档数量</p>
+</li>
+<li><p>limit()   指定游标返回的最大文档数  （limit(0)与没有使用limit效果一样）<br><code>db.orders.find().limit(5).count(true)</code></p>
+</li>
+</ul>
+</li>
+<li><p>投射<br>指定查询结果中出现的字段</p>
+<ul>
+<li>0：不出现，1：出现，_id列默认出现<br><code>db.inventory.find(   &#123; status: &quot;A&quot; &#125;, &#123; item: 1, status: 1, &quot;size.uom&quot;: 1 &#125;) </code></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>修改</p>
+<ul>
+<li>db.collection.updateOne()    更新最多一篇文档    第二个参数：更新操作符的文档</li>
+<li>db.collection.updateMany()   更新多篇文档        第二个参数：更新操作符的文档</li>
+<li>db.collection.replaceOne()    用新文档替换原来的文档  第二个参数：新的文档</li>
+<li>db.collection.update()        更新或替换原来的文档    第二个参数：更新操作符的文档或新文档</li>
+<li>文档主键_id是不能更改的</li>
+<li>操作符</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>$set</td>
+<td>更新或新增字段</td>
+</tr>
+<tr>
+<td>$unset</td>
+<td>删除字段</td>
+</tr>
+<tr>
+<td>$rename</td>
+<td>重命名字段</td>
+</tr>
+<tr>
+<td>$inc</td>
+<td>加减字段值</td>
+</tr>
+<tr>
+<td>$mul</td>
+<td>相乘字段值</td>
+</tr>
+<tr>
+<td>$min</td>
+<td></td>
+</tr>
+<tr>
+<td>$max</td>
+<td></td>
+</tr>
+</tbody></table>
+<ul>
+<li><p>$set   </p>
+<ul>
+<li><p>普通修改</p>
+<pre><code>db.products.update(
+&#123; _id: 100 &#125;,   //查询_id的100的文档
+&#123; $set: &#123; details: &quot;zzz&quot; &#125; &#125; )//修改details为zzz</code></pre>
+</li>
+<li><p>嵌套文档修改</p>
+<pre><code>db.products.update(
+&#123; _id: 100 &#125;,   
+&#123; $set: &#123; &quot;details.make&quot;: &quot;zzz&quot; &#125; &#125; )//&#123;details:&#123;make:&#39;zzz&#39;&#125;&#125;</code></pre>
+</li>
+<li><p>修改数组</p>
+<pre><code>db.products.update(
+&#123; _id: 100 &#125;,
+&#123; $set: &#123;
+&quot;tags.1&quot;: &quot;rain gear&quot;,
+&quot;ratings.0.rating&quot;: 2      &#125;   &#125;)// &#123;rating:[&#123;rating:2&#125;]&#125; 数组中第一个元素的rating改为2</code></pre>
+</li>
+</ul>
+</li>
+<li><p>$unset</p>
+<pre><code>db.products.update(
+&#123; _id:100 &#125;,
+&#123; $unset: &#123; quantity: &quot;&quot;, &quot;details.model&quot;: &quot;&quot; &#125; &#125;)
+删除数组中的元素时，数组的长度不变，只是把相应位置的值改为null：</code></pre>
+</li>
+<li><p>$rename</p>
+<p>重命名文档中的字段<br>   <code>db.students.updateMany( &#123;&#125;, &#123; $rename: &#123; &quot;nmae&quot;: &quot;name&quot; &#125; &#125; )</code><br>重命名内嵌文档中的字段<br>   <code>db.students.update( &#123; _id: 1 &#125;, &#123; $rename: &#123; &quot;name.first&quot;: &quot;name.fname&quot; &#125; &#125; )</code><br>改变字段位置<br>   <code>db.students.update( &#123; _id: 1 &#125;, &#123; $rename: &#123; &quot;name.last&quot;: &quot;last &quot;,&quot;mobile&quot;: &quot;name mobile&quot;&#125; &#125; )</code></p>
+</li>
+<li><p>$inc<br><code>db.students.update( &#123; _id: 1 &#125;, &#123; $inc: &#123; &quot;score&quot;: -10&#125; &#125; )</code></p>
+</li>
+<li><p>$mul<br><code>db.students.update( &#123; _id: 1 &#125;, &#123; $mul: &#123; &quot;score&quot;: 0.5&#125; &#125; )</code></p>
+</li>
+</ul>
+</li>
+<li><p>删除</p>
+<ul>
+<li>db.collection.deleteOne() //删除满足筛选条件的一篇文档</li>
+<li>db.collection.deleteMany() //删除满足筛选条件的所有文档</li>
+<li>db.collection.remove()  //删除满足筛选条件的一篇或所有文档，取决于justOne的取值</li>
+<li>删除集合中的所有文档<br><code>db.students.deleteMany(&#123;&#125;)</code></li>
+<li>删除整个集合<br><code>db.students.drop()</code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+	  <div class="article-footer-copyright">
+
+    本博客采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank">知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议(CC BY-NC-SA 4.0) 发布.</a>
+</div>
+
+	</div>
+
+	
+	<span id="/2021/01/03/mongodb/" class="leancloud-visitors view" data-flag-title="mongodb">
+		<em class="post-meta-item-text"> Page View </em> <i class="leancloud-visitors-count"></i>
+	</span>
+	
+	<div>
+  	<center>
+
+	<div class="pagination">
+
+    
+    
+    <a href="/2021/01/03/oracle/" type="button" class="btn btn-default"><i
+                class="fa fa-arrow-circle-o-left"></i> 上一页</a>
+    
+
+    <a href="/" type="button" class="btn btn-default"><i class="fa fa-home"></i>Home</a>
+    
+    <a href="/2021/01/03/反弹shell/" type="button" class="btn btn-default ">下一页<i
+                class="fa fa-arrow-circle-o-right"></i></a>
+    
+
+    
+</div>
+
+
+    </center>
+	</div>
+	
+	<!-- comment -->
+	<!--
+<section id="comment">
+    <h2 class="title">留言</h2>
+
+    
+    <div class="ds-thread" data-thread-key="2021/01/03/mongodb/" data-title="mongodb"
+         data-url="http://yaoa.cool/2021/01/03/mongodb/"></div>
+    
+</section>
+
+-->
+	
+	</div> <!-- col-md-9/col-md-12 -->
+
+
+	
+	<div id="side_meta">
+		<div class="col-md-3" id="post_meta"> 
+
+	<!-- date -->
+	
+	<div class="meta-widget">
+	<i class="fa fa-clock-o"></i>
+	2021-01-03 
+	</div>
+	
+
+	<!-- categories -->
+    
+	<div class="meta-widget">
+	<a data-toggle="collapse" data-target="#categorys"><i class="fa fa-folder"></i></a>	
+    <ul id="categorys" class="tag_box list-unstyled collapse in">
+          
+  <li>
+    <li><a href="/categories/数据库/">数据库<span>3</span></a></li>
+  </li>
+
+    </ul>
+	</div>
+	
+
+	<!-- tags -->
+	
+	<div class="meta-widget">
+	<a data-toggle="collapse" data-target="#tags"><i class="fa fa-tags"></i></a>		  
+    <ul id="tags" class="tag_box list-unstyled collapse in">	  
+	    
+  <li><a href="/tags/数据库/">数据库<span>3</span></a></li>
+    </ul>
+	</div>
+		
+
+	<!-- toc -->
+	<div class="meta-widget">
+	
+	   <a data-toggle="collapse" data-target="#toc"><i class="fa fa-bars"></i></a>
+	   <div id="toc" class="toc collapse in">
+		   <span class="toc-title">Contents</span>
+			
+		</div>
+	
+	</div>
+	
+    <hr>
+	
+</div><!-- col-md-3 -->
+
+		
+
+	</div>
+	
+		
+
+</div><!-- row -->
+
+<!--
+<script type="text/javascript">
+  var duoshuoQuery = { short_name: '123' };
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';
+    ds.async = true;
+    ds.src = 'http://static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script>
+
+ -->
+
+
+
+	</div>
+  </div>
+  <div class="container-narrow">
+  <footer> <p>
+  
+  &copy; 2021 yaoa's Blog
+  
+      powered by <a href="http://hexo.io/" target="_blank">Hexo</a>.Theme <a href="https://github.com/Ares-X/hexo-theme-freemind.bithack" target="_blank">freemind.bithack</a>  
+</p>
+ </footer>
+</div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>⬆︎TOP</span>
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+</body>
+   </html>
