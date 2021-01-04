@@ -43,139 +43,7 @@ DATA
 
 
 ROWID
-表示数据行的物理地址 select rowid from
-
-
-
-字面值
-
-字符串
-
-
-
-    转义单引号 &amp;#39;&amp;#39;
-    unicode字符串 N&amp;#39;123&amp;#39;
-
-数值
-
-日期 
-DATA &amp;#39;1999-12-12&amp;#39;   格式 YYYY-MM-DD
-TO_DATA(&amp;#39;值&amp;#39;，&amp;#39;格式&amp;#39;)
-
-函数
-
-字符函数
-
-ASCII()
-返回一个字符串的第一个字符的ASCII码，他的逆函数是CHR()
-
-CHR()
-
-
-
-
-
-
-      ASCII()的逆函数
-
-* INITCAP()
-
-      返回字符串的每个单词的第一个字母大写而单词中的其他字母小写的string。
-
-* LTRIM()
-
-      反回删除从左边算起出现在string2中的字符的string1。String2被缺省设置为单个的空格。
-
-* RTRIM()
-
-      返回删除从右边算起出现在string1中出现的字符string2. string2被缺省设置为单个的空格.
-
-* TRIM()
-
-      删除前后的空格
-
-* UPPER()
-
-      返回大写的string.不是字母的字符不变.CHAR返回CHAR，VARCHAR2返回VARCHAR2。
-
-* SUBSTR(string,a[,b])
-
-      返回从a开始b个字符长的string的一个子字符串.
-      a为负数表示从后往前数，b为空表示取到末尾，b为0或负数返回null
-
-* REPLACE(string,search_string[,replace_string])
-
-      将string中的search_string用replace_string删除,如果replace_string为空，则删除。
-
-* LPAD(string1,n,string2)
-
-      用string2将string1从左边进行填充，填充到长度为n
-
-* LENGTH（string）
-
-      返回string的字符单位的长度.CHAR数值是填充空格类型的,如果string由数据类型CHAR,它的结尾的空格都被计算到字符串长度中间.如果string是NULL,返回结果是NULL,而不是0.
-
-数字型
-
-FLOOR(n)
-
-
-
-      返回小于等于n的最大整数
-
-* ROUND(x[,y])
-
-      计算保留到小数点右边y位的x值. y缺省设置为0,这会将x保留为最接近的整数.如果y小于0,保留到小数点左边相应的位. Y必须是整数.进行四舍五入。
-
-* CEIL(n)
-
-      向上取整
-
-* TRUNC(x[,y])
-
-      计算截尾到y位小数的x值. y缺省为0,结果变为一个整数值.如果y是一个负数,那么就截尾到小数点左边对应的位上. 只是该函数不对指定小数前或后的部分做相应舍入选择处理，而统统截去。
-
-日期函数
-默认的日期格式可以在每个会话中更换：ALTER  SESSION   SET  NLS_DATE_FORMAT = ‘DD_MM_YYYY HH24:MI:SS’
-
-
-    * TO_DATE(String[,format[,nlsparams]])
-
-            把CHAR或者VARCHAR2类型的String转换为一个DATE类型的变量. format是一个日期格式字符串.当不指定format的时候,使用该会话的缺省日期格式.
-            例子：to_date(&amp;#39;2020-1-1 13:20:00&amp;#39;,&amp;#39;YYYY-MM-DD HH24:MI:SS&amp;#39;)
-    * TO_CHAR(d [,format[,nlsparams]])
-
-            将日期d转换为一个VARCHAR2类型的字符串.如果指定了format,那么就使用位置:它控制结果的方式.格式字符串是由格式元素构成的.第一个元素返回日期数值一个部份,例如日子.如果没有给定format,使用的就是该会话的缺省日期格式.如果指定了nlsparams,它就控制着返回字符串的月份和日分量信息所使用的语言. 
-            nlsparams的格式是: “NLS_DATE_LANGUAGE”
-            例子: to_char(sysdate,&amp;#39;YYYY-MM-DD HH24:MI:SS&amp;#39;)
-    * SYSDATE
-
-            返回当前的时间
-
-    *  TRUNC(d,format)
-
-            计算截尾到由format指定单位的日期d.可以使用位置:格式和效果.缺省参数同ROUNG.
-    * ADD_MONTHS(d,x)
-
-            返回日期d加上x个月后的月份。x可以是任意整数。如果结果日期中的月份所包含的天数比d日期中的“日”分量要少。（即相加后的结果日期中的日分量信息已经超过该月的最后一天，例如，8月31日加上一个月之后得到9月31日，而9月只能有30天）返回结果月份的最后一天。
-            返回NUMBER类型
-    * LAST_DAY(d)
-
-            计算包含日期的d的月份最后一天的日期.这个函数可以用来计算当月中剩余天数.
-    * MONTHS_BETWEEN(date 1,date2)
-
-            计算date 1和date2之间月数.如果date 1,date2这两个日期中日分量信息是相同的,或者这两个日期都分别是所在月的最后一天,那么返回的结果是一个整数,否则包括一个小数,小数为富余天数除以31.
-
-SQL语句
-
-建表
-
-
-
-    CREATE  TABLE  T(
-    id  NUMBER  PRIMARY KEY,
-    name  VARCHAR2(20),
-    address  VARCHAR2(40))"> 
+表示数据行的物理地址 select rowid from"> 
   
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -321,6 +189,7 @@ SQL语句
 <td>表示数据行的物理地址 select rowid from</td>
 </tr>
 </tbody></table>
+<a id="more"></a>
 </li>
 <li><p>字面值</p>
 <ul>
