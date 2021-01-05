@@ -10,30 +10,7 @@
   <meta name="author" content="yaoa">
   
   <meta name="description" content="简介
-csrf(跨站请求伪造),简单说就是攻击者通过盗用身份认证信息，发送恶意请求。 CRSF能做的事情包括利用你的身份发邮件、发短信、进行交易转账等，甚至盗取你的账号。
-
-原理
-受害者登录网站A，在本地生成cookie。
-在不退出登录的情况下，访问恶意网站B。
-B要求访问网站A，发出一个request请求
-
-复现这里通过dvwa靶场还原csrf漏洞。
-low
-这是一个修改密码的页面
-
-
-源码
-123456789101112131415161718192021222324252627282930 &amp;lt;?phpif( isset( $_GET[ &amp;#x27;Change&amp;#x27; ] ) ) &amp;#123;    // Get input    $pass_new  = $_GET[ &amp;#x27;password_new&amp;#x27; ];    $pass_conf = $_GET[ &amp;#x27;password_conf&amp;#x27; ];    // Do the passwords match?    if( $pass_new == $pass_conf ) &amp;#123;        // They do!        $pass_new = ((isset($GLOBALS[&amp;quot;___mysqli_ston&amp;quot;]) &amp;amp;&amp;amp; is_object($GLOBALS[&amp;quot;___mysqli_ston&amp;quot;])) ? mysqli_real_escape_string($GLOBALS[&amp;quot;___mysqli_ston&amp;quot;],  $pass_new ) : ((trigger_error(&amp;quot;[MySQLConverterToo] Fix the mysql_escape_string() call! This code does not work.&amp;quot;, E_USER_ERROR)) ? &amp;quot;&amp;quot; : &amp;quot;&amp;quot;));        $pass_new = md5( $pass_new );        // Update the database        $insert = &amp;quot;UPDATE `users` SET password = &amp;#x27;$pass_new&amp;#x27; WHERE user = &amp;#x27;&amp;quot; . dvwaCurrentUser() . &amp;quot;&amp;#x27;;&amp;quot;;        $result = mysqli_query($GLOBALS[&amp;quot;___mysqli_ston&amp;quot;],  $insert ) or die( &amp;#x27;&amp;lt;pre&amp;gt;&amp;#x27; . ((is_object($GLOBALS[&amp;quot;___mysqli_ston&amp;quot;])) ? mysqli_error($GLOBALS[&amp;quot;___mysqli_ston&amp;quot;]) : (($___mysqli_res = mysqli_connect_error()) ? $___mysqli_res : false)) . &amp;#x27;&amp;lt;/pre&amp;gt;&amp;#x27; );        // Feedback for the user        echo &amp;quot;&amp;lt;pre&amp;gt;Password Changed.&amp;lt;/pre&amp;gt;&amp;quot;;    &amp;#125;    else &amp;#123;        // Issue with passwords matching        echo &amp;quot;&amp;lt;pre&amp;gt;Passwords did not match.&amp;lt;/pre&amp;gt;&amp;quot;;    &amp;#125;    ((is_null($___mysqli_res = mysqli_close($GLOBALS[&amp;quot;___mysqli_ston&amp;quot;]))) ? false : $___mysqli_res);&amp;#125;?&amp;gt;
-
-源码仅仅对两次密码输入是否一致进行了判断，没有进行有效的身份验证
-
-
-随便修改一个密码,然后通过burp抓包，生成csrf利用的页面。
-
-
-
-
-生成的页面中包含一个带有默认值的表单，只要受害者点击了提交按钮，就会将默认值连带受害者的cookie一同提交。这里选择Test in browser，进行测试。"> 
+csrf(跨站请求伪造),简单说就是攻击者通过盗用身份认证信息，发送恶意请求。 CRSF能做的事情包括利用你的身份发邮件、发短信、进行交易转账等，甚至盗取你的账号。"> 
   
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -144,6 +121,8 @@ low
 	  <h1 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h1><blockquote>
 <p>csrf(跨站请求伪造),简单说就是攻击者通过盗用身份认证信息，发送恶意请求。 CRSF能做的事情包括利用你的身份发邮件、发短信、进行交易转账等，甚至盗取你的账号。</p>
 </blockquote>
+<a id="more"></a>
+
 <h1 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h1><ol>
 <li>受害者登录网站A，在本地生成cookie。</li>
 <li>在不退出登录的情况下，访问恶意网站B。</li>

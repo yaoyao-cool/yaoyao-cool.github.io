@@ -141,28 +141,6 @@
 		<h1 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h1><blockquote>
 <p>csrf(跨站请求伪造),简单说就是攻击者通过盗用身份认证信息，发送恶意请求。 CRSF能做的事情包括利用你的身份发邮件、发短信、进行交易转账等，甚至盗取你的账号。</p>
 </blockquote>
-<h1 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h1><ol>
-<li>受害者登录网站A，在本地生成cookie。</li>
-<li>在不退出登录的情况下，访问恶意网站B。</li>
-<li>B要求访问网站A，发出一个request请求</li>
-</ol>
-<h1 id="复现"><a href="#复现" class="headerlink" title="复现"></a>复现</h1><p>这里通过dvwa靶场还原csrf漏洞。</p>
-<h2 id="low"><a href="#low" class="headerlink" title="low"></a>low</h2><ul>
-<li><p>这是一个修改密码的页面</p>
-<p><img src="/images/csrf/image-20210104224222141.png" alt="image-20210104224222141"></p>
-</li>
-<li><p>源码</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"> <span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span>( <span class="keyword">isset</span>( <span class="variable">$_GET</span>[ <span class="string">&#x27;Change&#x27;</span> ] ) ) &#123;</span><br><span class="line">    <span class="comment">// Get input</span></span><br><span class="line">    <span class="variable">$pass_new</span>  = <span class="variable">$_GET</span>[ <span class="string">&#x27;password_new&#x27;</span> ];</span><br><span class="line">    <span class="variable">$pass_conf</span> = <span class="variable">$_GET</span>[ <span class="string">&#x27;password_conf&#x27;</span> ];</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Do the passwords match?</span></span><br><span class="line">    <span class="keyword">if</span>( <span class="variable">$pass_new</span> == <span class="variable">$pass_conf</span> ) &#123;</span><br><span class="line">        <span class="comment">// They do!</span></span><br><span class="line">        <span class="variable">$pass_new</span> = ((<span class="keyword">isset</span>(<span class="variable">$GLOBALS</span>[<span class="string">&quot;___mysqli_ston&quot;</span>]) &amp;&amp; is_object(<span class="variable">$GLOBALS</span>[<span class="string">&quot;___mysqli_ston&quot;</span>])) ? mysqli_real_escape_string(<span class="variable">$GLOBALS</span>[<span class="string">&quot;___mysqli_ston&quot;</span>],  <span class="variable">$pass_new</span> ) : ((trigger_error(<span class="string">&quot;[MySQLConverterToo] Fix the mysql_escape_string() call! This code does not work.&quot;</span>, E_USER_ERROR)) ? <span class="string">&quot;&quot;</span> : <span class="string">&quot;&quot;</span>));</span><br><span class="line">        <span class="variable">$pass_new</span> = md5( <span class="variable">$pass_new</span> );</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Update the database</span></span><br><span class="line">        <span class="variable">$insert</span> = <span class="string">&quot;UPDATE `users` SET password = &#x27;<span class="subst">$pass_new</span>&#x27; WHERE user = &#x27;&quot;</span> . dvwaCurrentUser() . <span class="string">&quot;&#x27;;&quot;</span>;</span><br><span class="line">        <span class="variable">$result</span> = mysqli_query(<span class="variable">$GLOBALS</span>[<span class="string">&quot;___mysqli_ston&quot;</span>],  <span class="variable">$insert</span> ) <span class="keyword">or</span> <span class="keyword">die</span>( <span class="string">&#x27;&lt;pre&gt;&#x27;</span> . ((is_object(<span class="variable">$GLOBALS</span>[<span class="string">&quot;___mysqli_ston&quot;</span>])) ? mysqli_error(<span class="variable">$GLOBALS</span>[<span class="string">&quot;___mysqli_ston&quot;</span>]) : ((<span class="variable">$___mysqli_res</span> = mysqli_connect_error()) ? <span class="variable">$___mysqli_res</span> : <span class="literal">false</span>)) . <span class="string">&#x27;&lt;/pre&gt;&#x27;</span> );</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Feedback for the user</span></span><br><span class="line">        <span class="keyword">echo</span> <span class="string">&quot;&lt;pre&gt;Password Changed.&lt;/pre&gt;&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">// Issue with passwords matching</span></span><br><span class="line">        <span class="keyword">echo</span> <span class="string">&quot;&lt;pre&gt;Passwords did not match.&lt;/pre&gt;&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    ((is_null(<span class="variable">$___mysqli_res</span> = mysqli_close(<span class="variable">$GLOBALS</span>[<span class="string">&quot;___mysqli_ston&quot;</span>]))) ? <span class="literal">false</span> : <span class="variable">$___mysqli_res</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">?&gt;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>源码仅仅对两次密码输入是否一致进行了判断，没有进行有效的身份验证</p>
-</blockquote>
-</li>
-<li><p>随便修改一个密码,然后通过burp抓包，生成csrf利用的页面。</p>
-<p><img src="/images/csrf/image-20210104224551445.png" alt="image-20210104224551445"></p>
-</li>
-</ul>
-<p><img src="/images/csrf/image-20210104225135153.png" alt="image-20210104225135153"></p>
-<p>生成的页面中包含一个带有默认值的表单，只要受害者点击了提交按钮，就会将默认值连带受害者的cookie一同提交。这里选择Test in browser，进行测试。</p>
 	
 
 	</div>
@@ -177,28 +155,6 @@
 		<h1 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h1><blockquote>
 <p>csrf(跨站请求伪造),简单说就是攻击者通过盗用身份认证信息，发送恶意请求。 CRSF能做的事情包括利用你的身份发邮件、发短信、进行交易转账等，甚至盗取你的账号。</p>
 </blockquote>
-<h1 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h1><ol>
-<li>受害者登录网站A，在本地生成cookie。</li>
-<li>在不退出登录的情况下，访问恶意网站B。</li>
-<li>B要求访问网站A，发出一个request请求</li>
-</ol>
-<h1 id="复现"><a href="#复现" class="headerlink" title="复现"></a>复现</h1><p>这里通过dvwa靶场还原csrf漏洞。</p>
-<h2 id="low"><a href="#low" class="headerlink" title="low"></a>low</h2><ul>
-<li><p>这是一个修改密码的页面</p>
-<p><img src="/images/csrf/image-20210104224222141.png" alt="image-20210104224222141"></p>
-</li>
-<li><p>源码</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"> <span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span>( <span class="keyword">isset</span>( <span class="variable">$_GET</span>[ <span class="string">&#x27;Change&#x27;</span> ] ) ) &#123;</span><br><span class="line">    <span class="comment">// Get input</span></span><br><span class="line">    <span class="variable">$pass_new</span>  = <span class="variable">$_GET</span>[ <span class="string">&#x27;password_new&#x27;</span> ];</span><br><span class="line">    <span class="variable">$pass_conf</span> = <span class="variable">$_GET</span>[ <span class="string">&#x27;password_conf&#x27;</span> ];</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Do the passwords match?</span></span><br><span class="line">    <span class="keyword">if</span>( <span class="variable">$pass_new</span> == <span class="variable">$pass_conf</span> ) &#123;</span><br><span class="line">        <span class="comment">// They do!</span></span><br><span class="line">        <span class="variable">$pass_new</span> = ((<span class="keyword">isset</span>(<span class="variable">$GLOBALS</span>[<span class="string">&quot;___mysqli_ston&quot;</span>]) &amp;&amp; is_object(<span class="variable">$GLOBALS</span>[<span class="string">&quot;___mysqli_ston&quot;</span>])) ? mysqli_real_escape_string(<span class="variable">$GLOBALS</span>[<span class="string">&quot;___mysqli_ston&quot;</span>],  <span class="variable">$pass_new</span> ) : ((trigger_error(<span class="string">&quot;[MySQLConverterToo] Fix the mysql_escape_string() call! This code does not work.&quot;</span>, E_USER_ERROR)) ? <span class="string">&quot;&quot;</span> : <span class="string">&quot;&quot;</span>));</span><br><span class="line">        <span class="variable">$pass_new</span> = md5( <span class="variable">$pass_new</span> );</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Update the database</span></span><br><span class="line">        <span class="variable">$insert</span> = <span class="string">&quot;UPDATE `users` SET password = &#x27;<span class="subst">$pass_new</span>&#x27; WHERE user = &#x27;&quot;</span> . dvwaCurrentUser() . <span class="string">&quot;&#x27;;&quot;</span>;</span><br><span class="line">        <span class="variable">$result</span> = mysqli_query(<span class="variable">$GLOBALS</span>[<span class="string">&quot;___mysqli_ston&quot;</span>],  <span class="variable">$insert</span> ) <span class="keyword">or</span> <span class="keyword">die</span>( <span class="string">&#x27;&lt;pre&gt;&#x27;</span> . ((is_object(<span class="variable">$GLOBALS</span>[<span class="string">&quot;___mysqli_ston&quot;</span>])) ? mysqli_error(<span class="variable">$GLOBALS</span>[<span class="string">&quot;___mysqli_ston&quot;</span>]) : ((<span class="variable">$___mysqli_res</span> = mysqli_connect_error()) ? <span class="variable">$___mysqli_res</span> : <span class="literal">false</span>)) . <span class="string">&#x27;&lt;/pre&gt;&#x27;</span> );</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Feedback for the user</span></span><br><span class="line">        <span class="keyword">echo</span> <span class="string">&quot;&lt;pre&gt;Password Changed.&lt;/pre&gt;&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">// Issue with passwords matching</span></span><br><span class="line">        <span class="keyword">echo</span> <span class="string">&quot;&lt;pre&gt;Passwords did not match.&lt;/pre&gt;&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    ((is_null(<span class="variable">$___mysqli_res</span> = mysqli_close(<span class="variable">$GLOBALS</span>[<span class="string">&quot;___mysqli_ston&quot;</span>]))) ? <span class="literal">false</span> : <span class="variable">$___mysqli_res</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">?&gt;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>源码仅仅对两次密码输入是否一致进行了判断，没有进行有效的身份验证</p>
-</blockquote>
-</li>
-<li><p>随便修改一个密码,然后通过burp抓包，生成csrf利用的页面。</p>
-<p><img src="/images/csrf/image-20210104224551445.png" alt="image-20210104224551445"></p>
-</li>
-</ul>
-<p><img src="/images/csrf/image-20210104225135153.png" alt="image-20210104225135153"></p>
-<p>生成的页面中包含一个带有默认值的表单，只要受害者点击了提交按钮，就会将默认值连带受害者的cookie一同提交。这里选择Test in browser，进行测试。</p>
 	
 	</div>
   <a type="button" href="/2021/01/04/csrf/#more" class="btn btn-default more">阅读此文</a>
@@ -851,21 +807,21 @@
 		<h4>标签云</h4>
 		<ul class="tag_box inline list-unstyled">		
 		
-			<li><a href="/tags/web/">web<span>5</span></a></li>
+			<li><a href="/tags/靶场/">靶场<span>1</span></a></li>
 		
-			<li><a href="/tags/渗透/">渗透<span>5</span></a></li>
+			<li><a href="/tags/web/">web<span>5</span></a></li>
 		
 			<li><a href="/tags/sql注入/">sql注入<span>2</span></a></li>
 		
 			<li><a href="/tags/docker/">docker<span>2</span></a></li>
 		
-			<li><a href="/tags/靶场/">靶场<span>1</span></a></li>
-		
-			<li><a href="/tags/信息搜集/">信息搜集<span>1</span></a></li>
+			<li><a href="/tags/渗透/">渗透<span>5</span></a></li>
 		
 			<li><a href="/tags/linux/">linux<span>5</span></a></li>
 		
 			<li><a href="/tags/数据库/">数据库<span>3</span></a></li>
+		
+			<li><a href="/tags/信息搜集/">信息搜集<span>1</span></a></li>
 		
 		 
 		</ul>
