@@ -28,7 +28,7 @@
 <meta property="og:description" content="成因 服务器配置不当   开源编辑器上传漏洞 很多开源的编辑器历史上都有不同的上传漏洞   本地文件上传限制绕过 仅仅在本地通过js限制，可以在控制台中修改代码，或者通过burp代理绕过限制。   过滤不严或被绕过 有些网站上使用了黑名单过滤掉了一些关键的可执行文件脚本后缀等，但黑名单不全或者被绕过，导致可执行脚本被上传到服务器上，执行。 通过各种手段绕过限制。   文件解析漏洞导致文件执行 中间">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2021-01-05T02:31:47.000Z">
-<meta property="article:modified_time" content="2021-01-05T12:42:37.758Z">
+<meta property="article:modified_time" content="2021-01-06T07:21:22.505Z">
 <meta property="article:author" content="Ya0a">
 <meta property="article:tag" content="web">
 <meta property="article:tag" content="渗透">
@@ -190,10 +190,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2021-01-05 10:31:47 / 修改时间：20:42:37" itemprop="dateCreated datePublished" datetime="2021-01-05T10:31:47+08:00">2021-01-05</time>
+              <time title="创建时间：2021-01-05 10:31:47" itemprop="dateCreated datePublished" datetime="2021-01-05T10:31:47+08:00">2021-01-05</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-01-06 15:21:22" itemprop="dateModified" datetime="2021-01-06T15:21:22+08:00">2021-01-06</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -240,8 +246,28 @@
 </ul>
 <a id="more"></a>
 
-
-
+<h1 id="php中的文件上传"><a href="#php中的文件上传" class="headerlink" title="php中的文件上传"></a>php中的文件上传</h1><h2 id="常用函数"><a href="#常用函数" class="headerlink" title="常用函数"></a>常用函数</h2><ul>
+<li><code>$_FILES[&quot;file&quot;][&quot;name&quot;] - 上传文件的名称_</code></li>
+<li><code>$_FILES[&quot;file&quot;][&quot;type&quot;] - 上传文件的类型</code></li>
+<li><code>$_FILES[&quot;file&quot;][&quot;size&quot;] - 上传文件的大小，以字节计_</code></li>
+<li><code>$_FILES[&quot;file&quot;][&quot;tmp_name&quot;] - 存储在服务器的文件的临时副本的名称</code></li>
+<li><code>$_FILES[&quot;file&quot;][&quot;error&quot;] - 由文件上传导致的错误代码</code></li>
+</ul>
+<h2 id="文件处理函数"><a href="#文件处理函数" class="headerlink" title="文件处理函数"></a>文件处理函数</h2><blockquote>
+<ol>
+<li>fopen() 函数用于在 PHP 中打开文件</li>
+<li>fclose() 函数用于关闭打开的文件</li>
+<li>feof() 函数检测是否已到达文件末尾（EOF）</li>
+<li>fgets() 函数用于从文件中逐行读取文件。</li>
+<li>fgetc() 函数用于从文件中逐字符地读取文件。</li>
+<li>is_uploaded_file() 函数判断指定的文件是否是通过 HTTP POST 上传的。</li>
+<li>move_uploaded_file() 函数将上传的文件移动到新位置。</li>
+<li>file_exists() 函数检查文件或目录是否存</li>
+<li>end() 函数将内部指针指向数组中的最后一个元素，并输出。</li>
+<li>explode() 函数使用一个字符串分割另一个字符串，并返回由字符串组成的数组。</li>
+<li>in_array() 函数搜索数组中是否存在指定的值。</li>
+</ol>
+</blockquote>
 <h1 id="常用的绕过方式"><a href="#常用的绕过方式" class="headerlink" title="常用的绕过方式"></a>常用的绕过方式</h1><ul>
 <li><p>本地js验证</p>
 <ul>
@@ -359,11 +385,69 @@
 <li>先上传<code>a.php:.jpg</code>,在服务端生成空a.php文件,然后上传<code>a.ph&lt;</code>写入木马。</li>
 </ul>
 </li>
-<li></li>
+<li><p>文件禁止访问绕过</p>
+<p>脚本上传到的目录不能被解析或访问，</p>
+<ul>
+<li><p>可以配合文件包含绕过。</p>
+</li>
+<li><p>pathinfo导致绕过</p>
+<p>a.php/xxx绕过</p>
+</li>
+</ul>
+</li>
+<li><p>getimagesize函数绕过</p>
+<p>将php代码添加到图片中。</p>
+</li>
+<li><p>imagecreatefromjpeg函数绕过</p>
+<blockquote>
+<p>imagecreatefromjpeg函数会渲染图像生成新的图像，在图片内的代码会消失，可以用脚本<a target="_blank" rel="noopener" href="https://github.com/BlackFan/jpg_payload%EF%BC%8C%E7%BB%95%E8%BF%87.%E5%85%88%E4%B8%8A%E4%BC%A0%E6%AD%A3%E5%B8%B8%E7%9A%84%E5%9B%BE%E7%89%87%EF%BC%8C%E7%84%B6%E5%90%8E%E5%B0%86%E6%B8%B2%E6%9F%93%E8%BF%87%E7%9A%84%E5%9B%BE%E7%89%87%E4%B8%8B%E8%BD%BD%E4%B8%8B%E6%9D%A5%EF%BC%8C%E5%9C%A8%E7%94%A8%E8%84%9A%E6%9C%AC%E5%A4%84%E7%90%86%E6%8B%8D%E5%9B%BE%E7%89%87%EF%BC%8C%E7%84%B6%E5%90%8E%E5%B0%86%E4%BB%A3%E7%A0%81%E6%8F%92%E5%85%A5%E5%9B%BE%E7%89%87%EF%BC%8C%E9%87%8D%E6%96%B0%E4%B8%8A%E4%BC%A0%E3%80%82">https://github.com/BlackFan/jpg_payload，绕过.先上传正常的图片，然后将渲染过的图片下载下来，在用脚本处理拍图片，然后将代码插入图片，重新上传。</a></p>
+</blockquote>
+</li>
 </ul>
 <h1 id="文件解析漏洞"><a href="#文件解析漏洞" class="headerlink" title="文件解析漏洞"></a>文件解析漏洞</h1><h2 id="IIS解析漏洞"><a href="#IIS解析漏洞" class="headerlink" title="IIS解析漏洞"></a>IIS解析漏洞</h2><ul>
-<li>iis6中,<code>*.asp</code>文件夹中的所有文件会当作脚本进行解析。</li>
-<li></li>
+<li><p>iis6中,<code>*.asp</code>文件夹中的所有文件会当作脚本进行解析。</p>
+</li>
+<li><p>iis7.0/nginx&lt;0.8.3</p>
+<p>Q1时，上传一个存在于白名单的扩展名文件shell.jpg,在请求时以<code>shell.jpg/shell.php</code>请求，会将shell.jpg以php来解析。</p>
+</li>
+</ul>
+<h2 id="Apache"><a href="#Apache" class="headerlink" title="Apache"></a>Apache</h2><ul>
+<li><p>多后缀文件解析漏洞</p>
+<blockquote>
+<p>apache会从右往左开始解析，直到有可以解析的缀。</p>
+<p>例如<code>a.php.xxx</code>，会当作php脚本解析。</p>
+</blockquote>
+</li>
+<li><p>CVE-2017-15715</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;FilesMatch \.php$&gt;</span><br><span class="line"> SetHandler application&#x2F;x-httpd-php</span><br><span class="line"> &lt;&#x2F;FileMatch&gt;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>其中的$可以匹配换行符，所以上传<code>php\n</code>为后缀的文件可能会绕过黑名单，不过在php中，File[“name”]会清楚结尾的\n,  不能利用.</p>
+</blockquote>
+</li>
+</ul>
+<h2 id="nginx解析漏洞"><a href="#nginx解析漏洞" class="headerlink" title="nginx解析漏洞"></a>nginx解析漏洞</h2><ul>
+<li><p>默认fast-cgi开启状况下，在一个文件路径后面加上/xx.php会将原来的文件解析为php文件</p>
+</li>
+<li><p>空字节代码执行漏洞</p>
+<blockquote>
+<p>在fast-cgi关闭的情况下，nginx版本:0.5., 0.6., 0.7- 0.7.65, 0.8 -0.8.37，nginx在图片后附加php代码然后通过访问</p>
+<p>例如：xx.jpg%00.php</p>
+</blockquote>
+</li>
+</ul>
+<ul>
+<li><p>文件名逻辑漏洞(CVE-2013-4547)</p>
+<blockquote>
+<p>受影响的nginx版本: 0.8.41至1.4.3和1.5.7之前的1.5.x</p>
+<p>正常上传一个附加代码的图片”test.jpg”，访问时后面+”空格”+”\0”+”.php”，即让图片作为php文件解析</p>
+<p>例如：/test.jpg \0.php</p>
+</blockquote>
+</li>
+<li><p>目录穿越</p>
+<p>​    如果绝对路径”/home/“的URL映射是网站目录”/files/“，配置写成了”/files”</p>
+<p>​    <code>location /files &#123; alias /home/; &#125;</code></p>
+<p>​    就可以访问”/files../“，穿越路径，访问到绝对路径根目录”/“下的文件列表</p>
+</li>
 </ul>
 
     </div>
@@ -446,7 +530,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%88%90%E5%9B%A0"><span class="nav-number">1.</span> <span class="nav-text">成因</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%B8%B8%E7%94%A8%E7%9A%84%E7%BB%95%E8%BF%87%E6%96%B9%E5%BC%8F"><span class="nav-number">2.</span> <span class="nav-text">常用的绕过方式</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E8%A7%A3%E6%9E%90%E6%BC%8F%E6%B4%9E"><span class="nav-number">3.</span> <span class="nav-text">文件解析漏洞</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#IIS%E8%A7%A3%E6%9E%90%E6%BC%8F%E6%B4%9E"><span class="nav-number">3.1.</span> <span class="nav-text">IIS解析漏洞</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%88%90%E5%9B%A0"><span class="nav-number">1.</span> <span class="nav-text">成因</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#php%E4%B8%AD%E7%9A%84%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0"><span class="nav-number">2.</span> <span class="nav-text">php中的文件上传</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B8%B8%E7%94%A8%E5%87%BD%E6%95%B0"><span class="nav-number">2.1.</span> <span class="nav-text">常用函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E5%A4%84%E7%90%86%E5%87%BD%E6%95%B0"><span class="nav-number">2.2.</span> <span class="nav-text">文件处理函数</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%B8%B8%E7%94%A8%E7%9A%84%E7%BB%95%E8%BF%87%E6%96%B9%E5%BC%8F"><span class="nav-number">3.</span> <span class="nav-text">常用的绕过方式</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E8%A7%A3%E6%9E%90%E6%BC%8F%E6%B4%9E"><span class="nav-number">4.</span> <span class="nav-text">文件解析漏洞</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#IIS%E8%A7%A3%E6%9E%90%E6%BC%8F%E6%B4%9E"><span class="nav-number">4.1.</span> <span class="nav-text">IIS解析漏洞</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Apache"><span class="nav-number">4.2.</span> <span class="nav-text">Apache</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#nginx%E8%A7%A3%E6%9E%90%E6%BC%8F%E6%B4%9E"><span class="nav-number">4.3.</span> <span class="nav-text">nginx解析漏洞</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
