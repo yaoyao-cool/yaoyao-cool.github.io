@@ -8,7 +8,7 @@
       <link href="2021/02/16/DC-1/"/>
       <url>2021/02/16/DC-1/</url>
       
-        <content type="html"><![CDATA[<p>扫ip，直接打开靶机的web服务。</p><p>是一个drupal站，msf中找到exp，直接打。</p><p><img src="../images/DC-1/image-20210216155755216.png" alt="image-20210216155755216"></p><p><img src="../images/DC-1/image-20210216164610187.png" alt="image-20210216164610187"></p><p>站到了flag文件，但是没有权限。</p><p>这里用find命令提权</p><blockquote><p>find命令有SUID权限，执行命令时具有root权限</p></blockquote><p><img src="../images/DC-1/image-20210216170159881.png" alt="image-20210216170159881"></p><p><img src="../images/DC-1/image-20210216171417635.png" alt="image-20210216171417635"></p>]]></content>
+        <content type="html"><![CDATA[<p>扫ip，直接打开靶机的web服务。</p><p>是一个drupal站，msf中找到exp，直接打。</p><p><img src="/images/DC-1/image-20210216155755216.png" alt="image-20210216155755216"></p><p><img src="/images/DC-1/image-20210216164610187.png" alt="image-20210216164610187"></p><p>站到了flag文件，但是没有权限。</p><p>这里用find命令提权</p><blockquote><p>find命令有SUID权限，执行命令时具有root权限</p></blockquote><p><img src="/images/DC-1/image-20210216170159881.png" alt="image-20210216170159881"></p><p><img src="/images/DC-1/image-20210216171417635.png" alt="image-20210216171417635"></p>]]></content>
       
       
       <categories>
