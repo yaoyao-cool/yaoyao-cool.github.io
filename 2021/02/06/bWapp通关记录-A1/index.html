@@ -1,9 +1,9 @@
-<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="format-detection" content="telephone=no"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black"><link rel="icon" href="/images/icons/favicon-16x16.png?v=2.6.2" type="image/png" sizes="16x16"><link rel="icon" href="/images/icons/favicon-32x32.png?v=2.6.2" type="image/png" sizes="32x32"><meta name="description" content="HTML Injection - Reflected (GET)        输入的内容会直接回显到页面上，可以修改页面的dom或者执行js命令    或者可以直接构造一个表单，诱骗用户登录 1234http:&#x2F;&#x2F;192.168.0.176&#x2F;bWAPP&#x2F;htmli_get.php?firstname&#x3D;&amp;lt">
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="format-detection" content="telephone=no"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black"><link rel="icon" href="/images/icons/favicon-16x16.png?v=2.6.2" type="image/png" sizes="16x16"><link rel="icon" href="/images/icons/favicon-32x32.png?v=2.6.2" type="image/png" sizes="32x32"><meta name="description" content="HTML Injection - Reflected (GET)        输入的内容会直接回显到页面上，可以修改页面的dom或者执行js命令">
 <meta property="og:type" content="article">
 <meta property="og:title" content="bWapp通关记录(A1)">
 <meta property="og:url" content="http://yaoa.cool/2021/02/06/bWapp%E9%80%9A%E5%85%B3%E8%AE%B0%E5%BD%95-A1/index.html">
 <meta property="og:site_name" content="Ya0a">
-<meta property="og:description" content="HTML Injection - Reflected (GET)        输入的内容会直接回显到页面上，可以修改页面的dom或者执行js命令    或者可以直接构造一个表单，诱骗用户登录 1234http:&#x2F;&#x2F;192.168.0.176&#x2F;bWAPP&#x2F;htmli_get.php?firstname&#x3D;&amp;lt">
+<meta property="og:description" content="HTML Injection - Reflected (GET)        输入的内容会直接回显到页面上，可以修改页面的dom或者执行js命令">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://yaoa.cool/images/bWapp%E9%80%9A%E5%85%B3%E8%AE%B0%E5%BD%95-A1/image-20210206111042464.png">
 <meta property="og:image" content="http://yaoa.cool/images/bWapp%E9%80%9A%E5%85%B3%E8%AE%B0%E5%BD%95-A1/image-20210206111354308.png">
@@ -36,7 +36,7 @@
 <meta property="og:image" content="http://yaoa.cool/images/bWapp%E9%80%9A%E5%85%B3%E8%AE%B0%E5%BD%95-A1/image-20210207230523534.png">
 <meta property="og:image" content="http://yaoa.cool/images/bWapp%E9%80%9A%E5%85%B3%E8%AE%B0%E5%BD%95-A1/image-20210207231142676.png">
 <meta property="article:published_time" content="2021-02-06T03:03:59.000Z">
-<meta property="article:modified_time" content="2021-02-23T05:37:25.499Z">
+<meta property="article:modified_time" content="2021-02-23T14:22:06.120Z">
 <meta property="article:author" content="Ya0a">
 <meta property="article:tag" content="靶场">
 <meta property="article:tag" content="web">
@@ -70,6 +70,8 @@ window.CONFIG = CONFIG;</script><meta name="generator" content="Hexo 5.3.0"></he
           <a href="#HTML-Injection-Reflected-GET" class="heading-link"><i class="fas fa-link"></i></a><a href="#HTML-Injection-Reflected-GET" class="headerlink" title="HTML Injection - Reflected (GET)"></a>HTML Injection - Reflected (GET)</h1>
       <p><img src="/images/bWapp%E9%80%9A%E5%85%B3%E8%AE%B0%E5%BD%95-A1/image-20210206111042464.png" alt="image-20210206111042464"></p>
 <p>输入的内容会直接回显到页面上，可以修改页面的dom或者执行js命令</p>
+<a id="more"></a>
+
 <p><img src="/images/bWapp%E9%80%9A%E5%85%B3%E8%AE%B0%E5%BD%95-A1/image-20210206111354308.png" alt="image-20210206111354308"></p>
 <p><img src="/images/bWapp%E9%80%9A%E5%85%B3%E8%AE%B0%E5%BD%95-A1/image-20210206111404019.png" alt="image-20210206111404019"></p>
 <p><img src="/images/bWapp%E9%80%9A%E5%85%B3%E8%AE%B0%E5%BD%95-A1/image-20210206111413428.png" alt="image-20210206111413428"></p>
